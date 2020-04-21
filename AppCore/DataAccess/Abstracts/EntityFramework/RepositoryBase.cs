@@ -309,6 +309,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                                 break;
                             case EntityState.Deleted:
                                 entry.CurrentValues[_isDeletedEntityProperty] = true;
+                                entry.State = EntityState.Modified;
                                 break;
                         }
                     }
