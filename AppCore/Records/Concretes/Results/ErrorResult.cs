@@ -1,20 +1,20 @@
 ﻿using System;
 
-namespace AppCore.Records.Abstracts.Results
+namespace AppCore.Records.Concretes.Results
 {
-    public abstract class ErrorResultBase : ResultBase
+    public class ErrorResult : Result
     {
-        protected ErrorResultBase(string message) : base(false, message)
+        public ErrorResult(string message) : base(false, message)
         {
 
         }
 
-        protected ErrorResultBase() : base(false, "Error")
+        public ErrorResult() : base(false, "Error")
         {
 
         }
 
-        protected ErrorResultBase(Exception exception)
+        public ErrorResult(Exception exception)
             : base(false,
                 exception != null ? "Exception: " + exception.Message + (exception.InnerException != null ? " | Inner Exception: " + exception.InnerException.InnerException.Message : "") : "Error")
         {
@@ -22,19 +22,19 @@ namespace AppCore.Records.Abstracts.Results
         }
     }
 
-    public abstract class ErrorResultBase<TResultType> : ResultBase<TResultType>
+    public class ErrorResult<TResultType> : Result<TResultType>
     {
-        protected ErrorResultBase(string message, TResultType resultType) : base(false, message, resultType)
+        public ErrorResult(string message, TResultType resultType) : base(false, message, resultType)
         {
 
         }
 
-        protected ErrorResultBase(TResultType resultType) : base(false, "Error", resultType)
+        public ErrorResult(TResultType resultType) : base(false, "Error", resultType)
         {
-
+            
         }
 
-        protected ErrorResultBase(Exception exception)
+        public ErrorResult(Exception exception)
             : base(false,
                 exception != null ? "Exception: " + exception.Message + (exception.InnerException != null ? " | Inner Exception: " + exception.InnerException.InnerException.Message : "") : "Error",
                 default)

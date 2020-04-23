@@ -375,9 +375,9 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         }
 
         #region Dispose
-        private bool _disposed = false;
+        protected bool _disposed = false;
 
-        private void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (!this._disposed && disposing)
             {
