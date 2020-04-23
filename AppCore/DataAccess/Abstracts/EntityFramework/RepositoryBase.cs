@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AppCore.Records.Abstracts;
 
 namespace AppCore.DataAccess.Abstracts.EntityFramework
@@ -315,6 +316,34 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                     }
                 }
                 return _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<int?> SaveChangesAsync()
+        {
+            try
+            {
+                if (_isDeletedEntityProperty != null)
+                {
+                    foreach (var entry in _context.ChangeTracker.Entries<TEntity>())
+                    {
+                        switch (entry.State)
+                        {
+                            case EntityState.Added:
+                                entry.CurrentValues[_isDeletedEntityProperty] = false;
+                                break;
+                            case EntityState.Deleted:
+                                entry.CurrentValues[_isDeletedEntityProperty] = true;
+                                entry.State = EntityState.Modified;
+                                break;
+                        }
+                    }
+                }
+                return await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
