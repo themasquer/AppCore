@@ -489,6 +489,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                         }
                     }
                 }
+                Commit = true;
                 return _context.SaveChanges();
             }
             catch (Exception e)
@@ -517,6 +518,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                         }
                     }
                 }
+                Commit = true;
                 return await _context.SaveChangesAsync();
             }
             catch (Exception e)
