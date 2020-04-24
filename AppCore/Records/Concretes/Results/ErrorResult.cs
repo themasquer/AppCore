@@ -24,12 +24,12 @@ namespace AppCore.Records.Concretes.Results
 
     public class ErrorResult<TResultType> : Result<TResultType>
     {
-        public ErrorResult(string message, TResultType resultType) : base(false, message, resultType)
+        public ErrorResult(string message, TResultType data) : base(false, message, data)
         {
 
         }
 
-        public ErrorResult(TResultType resultType) : base(false, "Error", resultType)
+        public ErrorResult(TResultType data) : base(false, "Error", data)
         {
             
         }

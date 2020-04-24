@@ -15,12 +15,12 @@
 
     public class SuccessResult<TResultType> : Result<TResultType>
     {
-        public SuccessResult(string message, TResultType resultType) : base(true, message, resultType)
+        public SuccessResult(string message, TResultType data) : base(true, message, data)
         {
 
         }
 
-        public SuccessResult(TResultType resultType) : base(true, "Success", resultType)
+        public SuccessResult(TResultType data) : base(true, "Success", data)
         {
 
         }

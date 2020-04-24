@@ -4,8 +4,8 @@ namespace AppCore.Records.Concretes.Results
 {
     public class Result
     {
-        protected bool Success { get; }
-        protected string Message { get; }
+        public bool Success { get; }
+        public string Message { get; }
 
         protected Result(bool success, string message)
         {
@@ -14,13 +14,13 @@ namespace AppCore.Records.Concretes.Results
         }
     }
 
-    public class Result<TResultType> : Result, IResultType<TResultType>
+    public class Result<TResultType> : Result, IResultData<TResultType>
     {
-        public TResultType ResultType { get; }
+        public TResultType Data { get; }
 
-        protected Result(bool success, string message, TResultType resultType) : base(success, message)
+        protected Result(bool success, string message, TResultType data) : base(success, message)
         {
-            ResultType = resultType;
+            Data = data;
         }
     }
 }
