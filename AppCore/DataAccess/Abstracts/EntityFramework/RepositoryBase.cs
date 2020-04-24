@@ -13,6 +13,8 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         private readonly DbContext _context;
         private readonly string _isDeletedEntityProperty;
 
+        public bool Commit { get; set; }
+
         protected RepositoryBase(DbContext context)
         {
             _context = context;
@@ -21,6 +23,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             {
                 _isDeletedEntityProperty = null;
             }
+            Commit = true;
         }
 
         public virtual IQueryable<TEntity> GetEntityQuery()
@@ -109,6 +112,18 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<List<TEntity>> GetEntitiesAsync()
+        {
+            try
+            {
+                return await GetEntityQuery().ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual List<TEntity> GetEntities(params string[] entitiesToInclude)
         {
             try
@@ -122,11 +137,36 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<List<TEntity>> GetEntitiesAsync(params string[] entitiesToInclude)
+        {
+            try
+            {
+                var queryEntity = GetEntityQuery(entitiesToInclude);
+                return await queryEntity.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual List<TEntity> GetEntities(Expression<Func<TEntity, bool>> predicate)
         {
             try
             {
                 return GetEntityQuery(predicate).ToList();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<List<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return await GetEntityQuery(predicate).ToListAsync();
             }
             catch (Exception e)
             {
@@ -147,11 +187,36 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<List<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>> predicate, params string[] entitiesToInclude)
+        {
+            try
+            {
+                var queryEntity = GetEntityQuery(entitiesToInclude);
+                return await queryEntity.Where(predicate).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual TEntity GetEntity(int id)
         {
             try
             {
                 return GetEntityQuery().SingleOrDefault(e => e.Id == id);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<TEntity> GetEntityAsync(int id)
+        {
+            try
+            {
+                return await GetEntityQuery().SingleOrDefaultAsync(e => e.Id == id);
             }
             catch (Exception e)
             {
@@ -171,6 +236,18 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<TEntity> GetEntityAsync(int id, params string[] entitiesToInclude)
+        {
+            try
+            {
+                return await GetEntityQuery(entitiesToInclude).SingleOrDefaultAsync(e => e.Id == id);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual TEntity GetEntity(Expression<Func<TEntity, bool>> predicate)
         {
             try
@@ -183,11 +260,35 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return await GetEntityQuery().SingleOrDefaultAsync(predicate);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual TEntity GetEntity(Expression<Func<TEntity, bool>> predicate, params string[] entitiesToInclude)
         {
             try
             {
                 return GetEntityQuery(entitiesToInclude).SingleOrDefault(predicate);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> predicate, params string[] entitiesToInclude)
+        {
+            try
+            {
+                return await GetEntityQuery(entitiesToInclude).SingleOrDefaultAsync(predicate);
             }
             catch (Exception e)
             {
@@ -221,6 +322,18 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual long GetEntityLongCount()
+        {
+            try
+            {
+                return GetEntityQuery().LongCount();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual int GetEntityCount(Expression<Func<TEntity, bool>> predicate)
         {
             try
@@ -233,13 +346,25 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? AddEntity(TEntity entity, bool commit = true)
+        public virtual long GetEntityLongCount(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return GetEntityQuery().LongCount(predicate);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual int? AddEntity(TEntity entity)
         {
             try
             {
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Added;
-                if (commit)
+                if (Commit)
                     SaveChanges();
                 return entity.Id;
             }
@@ -249,13 +374,29 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? UpdateEntity(TEntity entity, bool commit = true)
+        public virtual async Task<int?> AddEntityAsync(TEntity entity)
+        {
+            try
+            {
+                var contextEntity = _context.Entry(entity);
+                contextEntity.State = EntityState.Added;
+                if (Commit)
+                    await SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual int? UpdateEntity(TEntity entity)
         {
             try
             {
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Modified;
-                if (commit)
+                if (Commit)
                     SaveChanges();
                 return entity.Id;
             }
@@ -265,12 +406,15 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? DeleteEntity(int id, bool commit = true)
+        public virtual async Task<int?> UpdateEntityAsync(TEntity entity)
         {
             try
             {
-                var entity = GetEntity(id);
-                return DeleteEntity(entity, commit);
+                var contextEntity = _context.Entry(entity);
+                contextEntity.State = EntityState.Modified;
+                if (Commit)
+                    await SaveChangesAsync();
+                return entity.Id;
             }
             catch (Exception e)
             {
@@ -278,15 +422,45 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? DeleteEntity(TEntity entity, bool commit = true)
+        public virtual int? DeleteEntity(int id)
+        {
+            try
+            {
+                var entity = GetEntity(id);
+                return DeleteEntity(entity);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual int? DeleteEntity(TEntity entity)
         {
             try
             {
                 var id = entity.Id;
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Deleted;
-                if (commit)
+                if (Commit)
                     SaveChanges();
+                return id;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<int?> DeleteEntityAsync(TEntity entity)
+        {
+            try
+            {
+                var id = entity.Id;
+                var contextEntity = _context.Entry(entity);
+                contextEntity.State = EntityState.Deleted;
+                if (Commit)
+                    await SaveChangesAsync();
                 return id;
             }
             catch (Exception e)
@@ -360,9 +534,10 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 if (query != null)
                 {
                     var entities = query.ToList();
+                    Commit = false;
                     foreach (var entity in entities)
                     {
-                        DeleteEntity(entity, false);
+                        DeleteEntity(entity);
                     }
                     _context.SaveChanges();
                 }
@@ -375,15 +550,15 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         }
 
         #region Dispose
-        protected bool _disposed = false;
+        protected bool disposed;
 
         protected void Dispose(bool disposing)
         {
-            if (!this._disposed && disposing)
+            if (!disposed && disposing)
             {
                 _context?.Dispose();
             }
-            this._disposed = true;
+            disposed = true;
         }
 
         public void Dispose()
