@@ -420,7 +420,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? AddEntity(TEntity entity)
+        public virtual void AddEntity(TEntity entity)
         {
             try
             {
@@ -428,7 +428,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Added;
                 if (Commit)
                     SaveChanges();
-                return entity.Id;
             }
             catch (Exception e)
             {
@@ -436,7 +435,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual async Task<int?> AddEntityAsync(TEntity entity)
+        public virtual async Task AddEntityAsync(TEntity entity)
         {
             try
             {
@@ -444,7 +443,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Added;
                 if (Commit)
                     await SaveChangesAsync();
-                return entity.Id;
             }
             catch (Exception e)
             {
@@ -452,7 +450,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? UpdateEntity(TEntity entity)
+        public virtual void UpdateEntity(TEntity entity)
         {
             try
             {
@@ -460,7 +458,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Modified;
                 if (Commit)
                     SaveChanges();
-                return entity.Id;
             }
             catch (Exception e)
             {
@@ -468,7 +465,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual async Task<int?> UpdateEntityAsync(TEntity entity)
+        public virtual async Task UpdateEntityAsync(TEntity entity)
         {
             try
             {
@@ -476,7 +473,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Modified;
                 if (Commit)
                     await SaveChangesAsync();
-                return entity.Id;
             }
             catch (Exception e)
             {
@@ -484,12 +480,12 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? DeleteEntity(int id)
+        public virtual void DeleteEntity(int id)
         {
             try
             {
                 var entity = GetEntity(id);
-                return DeleteEntity(entity);
+                DeleteEntity(entity);
             }
             catch (Exception e)
             {
@@ -497,12 +493,12 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual async Task<int?> DeleteEntityAsync(int id)
+        public virtual async Task DeleteEntityAsync(int id)
         {
             try
             {
                 var entity = await GetEntityAsync(id);
-                return await DeleteEntityAsync(entity);
+                await DeleteEntityAsync(entity);
             }
             catch (Exception e)
             {
@@ -510,7 +506,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? DeleteEntity(TEntity entity)
+        public virtual void DeleteEntity(TEntity entity)
         {
             try
             {
@@ -519,7 +515,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Deleted;
                 if (Commit)
                     SaveChanges();
-                return id;
             }
             catch (Exception e)
             {
@@ -527,7 +522,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual async Task<int?> DeleteEntityAsync(TEntity entity)
+        public virtual async Task DeleteEntityAsync(TEntity entity)
         {
             try
             {
@@ -536,7 +531,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                 contextEntity.State = EntityState.Deleted;
                 if (Commit)
                     await SaveChangesAsync();
-                return id;
             }
             catch (Exception e)
             {
@@ -544,7 +538,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? SaveChanges()
+        public virtual int SaveChanges()
         {
             try
             {
@@ -573,7 +567,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual async Task<int?> SaveChangesAsync()
+        public virtual async Task<int> SaveChangesAsync()
         {
             try
             {
@@ -602,7 +596,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual int? HardDeleteSoftDeletedEntities()
+        public virtual int HardDeleteSoftDeletedEntities()
         {
             try
             {
@@ -615,6 +609,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                     foreach (var entity in entities)
                     {
                         DeleteEntity(entity);
+                        deletedCount++;
                     }
                     _context.SaveChanges();
                 }
