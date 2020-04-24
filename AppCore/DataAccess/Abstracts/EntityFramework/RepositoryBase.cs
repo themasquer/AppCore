@@ -310,11 +310,37 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<bool> EntityExistsAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                if (await GetEntityQuery().AnyAsync(predicate))
+                    return true;
+                return false;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual int GetEntityCount()
         {
             try
             {
                 return GetEntityQuery().Count();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<int> GetEntityCountAsync()
+        {
+            try
+            {
+                return await GetEntityQuery().CountAsync();
             }
             catch (Exception e)
             {
@@ -334,6 +360,18 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<long> GetEntityLongCountAsync()
+        {
+            try
+            {
+                return await GetEntityQuery().LongCountAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual int GetEntityCount(Expression<Func<TEntity, bool>> predicate)
         {
             try
@@ -346,11 +384,35 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual async Task<int> GetEntityCountAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return await GetEntityQuery().CountAsync(predicate);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual long GetEntityLongCount(Expression<Func<TEntity, bool>> predicate)
         {
             try
             {
                 return GetEntityQuery().LongCount(predicate);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<long> GetEntityLongCountAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return await GetEntityQuery().LongCountAsync(predicate);
             }
             catch (Exception e)
             {
@@ -428,6 +490,19 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             {
                 var entity = GetEntity(id);
                 return DeleteEntity(entity);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<int?> DeleteEntityAsync(int id)
+        {
+            try
+            {
+                var entity = await GetEntityAsync(id);
+                return await DeleteEntityAsync(entity);
             }
             catch (Exception e)
             {
@@ -552,7 +627,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         }
 
         #region Dispose
-        protected bool disposed;
+        private bool disposed = false;
 
         protected void Dispose(bool disposing)
         {
