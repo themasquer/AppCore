@@ -224,6 +224,30 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual TEntity GetEntity(string guid)
+        {
+            try
+            {
+                return GetEntityQuery().SingleOrDefault(e => e.Guid == guid);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<TEntity> GetEntityAsync(string guid)
+        {
+            try
+            {
+                return await GetEntityQuery().SingleOrDefaultAsync(e => e.Guid == guid);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual TEntity GetEntity(int id, params string[] entitiesToInclude)
         {
             try
@@ -241,6 +265,30 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             try
             {
                 return await GetEntityQuery(entitiesToInclude).SingleOrDefaultAsync(e => e.Id == id);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual TEntity GetEntity(string guid, params string[] entitiesToInclude)
+        {
+            try
+            {
+                return GetEntityQuery(entitiesToInclude).SingleOrDefault(e => e.Guid == guid);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task<TEntity> GetEntityAsync(string guid, params string[] entitiesToInclude)
+        {
+            try
+            {
+                return await GetEntityQuery(entitiesToInclude).SingleOrDefaultAsync(e => e.Guid == guid);
             }
             catch (Exception e)
             {
@@ -424,6 +472,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
+                entity.Guid = Guid.NewGuid().ToString();
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Added;
                 if (Commit)
@@ -439,6 +488,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
+                entity.Guid = Guid.NewGuid().ToString();
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Added;
                 if (Commit)
@@ -506,11 +556,36 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
+        public virtual void DeleteEntity(string guid)
+        {
+            try
+            {
+                var entity = GetEntity(guid);
+                DeleteEntity(entity);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual async Task DeleteEntityAsync(string guid)
+        {
+            try
+            {
+                var entity = await GetEntityAsync(guid);
+                await DeleteEntityAsync(entity);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public virtual void DeleteEntity(TEntity entity)
         {
             try
             {
-                var id = entity.Id;
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Deleted;
                 if (Commit)
@@ -526,7 +601,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
-                var id = entity.Id;
                 var contextEntity = _context.Entry(entity);
                 contextEntity.State = EntityState.Deleted;
                 if (Commit)
