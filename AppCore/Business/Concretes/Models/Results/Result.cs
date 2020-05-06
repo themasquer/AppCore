@@ -6,13 +6,11 @@ namespace AppCore.Business.Concretes.Models.Results
     {
         public bool Success { get; }
         public string Message { get; set; }
-        public bool Exception { get; set; }
 
-        protected Result(bool success, string message, bool exception)
+        protected Result(bool success, string message)
         {
             Success = success;
             Message = message;
-            Exception = exception;
         }
     }
 
@@ -20,7 +18,7 @@ namespace AppCore.Business.Concretes.Models.Results
     {
         public TResultType Data { get; }
 
-        protected Result(bool success, string message, TResultType data, bool exception) : base(success, message, exception)
+        protected Result(bool success, string message, TResultType data) : base(success, message)
         {
             Data = data;
         }

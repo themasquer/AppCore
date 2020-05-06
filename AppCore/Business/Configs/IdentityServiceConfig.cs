@@ -15,8 +15,6 @@
         public static string ClaimNotFoundMessage => "ClaimNotFound";
         public static string ClaimsNotFoundMessage => "ClaimsNotFound";
         public static string ClaimFoundMessage => "ClaimFound";
-        public static string UserRolesErrorMessage => "UserRolesOperationError";
-        public static string UserClaimsErrorMessage => "UserClaimsOperationError";
         public static string PasswordUpdatedMessage => "PasswordUpdated";
     }
 }

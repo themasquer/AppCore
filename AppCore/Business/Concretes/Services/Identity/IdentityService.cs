@@ -20,6 +20,8 @@ namespace AppCore.Business.Concretes.Services.Identity
         private readonly IdentityUserRoleDalBase _userRoleDal;
         private readonly IdentityRoleDalBase _roleDal;
 
+        public bool ShowException { get; set; } = false;
+
         public IdentityService(IdentityUserDalBase userDal, IdentityUserClaimDalBase userClaimDal,
             IdentityClaimDalBase claimDal, IdentityUserRoleDalBase userRoleDal, IdentityRoleDalBase roleDal)
         {
@@ -41,7 +43,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -63,7 +65,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -77,7 +79,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -91,7 +93,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -109,7 +111,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc);
+                return new ErrorResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -127,7 +129,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc);
+                return new ErrorResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -145,7 +147,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc);
+                return new ErrorResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -163,7 +165,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityUserModel>>(exc);
+                return new ErrorResult<List<IdentityUserModel>>(exc, ShowException);
             }
         }
 
@@ -192,23 +194,15 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _userDal.AddEntity(entity);
                     UpdateUserModelIds(userModel, entity);
-                    var result = AddUserRolesByUser(userModel.IdentityRoles, entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
-                    result = AddUserClaimsByUser(userModel.IdentityClaims, entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    AddUserRolesByUser(userModel.IdentityRoles, entity.Id);
+                    AddUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                     return new SuccessResult<IdentityUserModel>(userModel);
                 }
                 return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserFoundMessage);
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -233,18 +227,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
-                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
+                        UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         return new SuccessResult<IdentityUserModel>(userModel);
                     }
                     return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserFoundMessage);
@@ -253,7 +237,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -278,18 +262,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
-                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
+                        UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         return new SuccessResult<IdentityUserModel>(userModel);
                     }
                     return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserFoundMessage);
@@ -298,7 +272,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -323,18 +297,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
-                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
+                        UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         return new SuccessResult<IdentityUserModel>(userModel);
                     }
                     return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserFoundMessage);
@@ -343,7 +307,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -372,7 +336,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -401,7 +365,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -430,7 +394,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc);
+                return new ErrorResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -441,16 +405,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(id);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
-                    result = DeleteUserClaimsByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -460,7 +416,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -471,16 +427,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
-                    result = DeleteUserClaimsByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -490,7 +438,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -501,16 +449,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
-                    result = DeleteUserClaimsByUser(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -520,7 +460,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
         #endregion
@@ -535,7 +475,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -548,7 +488,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -561,7 +501,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -574,7 +514,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityRoleModel>>(exc);
+                return new ErrorResult<List<IdentityRoleModel>>(exc, ShowException);
             }
         }
 
@@ -591,18 +531,14 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _roleDal.AddEntity(entity);
                     UpdateRoleModelIds(roleModel, entity);
-                    var result = AddUserRolesByRole(roleModel.IdentityUsers, entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
+                    AddUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                     return new SuccessResult<IdentityRoleModel>(roleModel);
                 }
                 return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleFoundMessage);
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -619,12 +555,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityRoleModel>(roleModel);
                     }
                     return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleFoundMessage);
@@ -633,7 +564,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -650,12 +581,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityRoleModel>(roleModel);
                     }
                     return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleFoundMessage);
@@ -664,7 +590,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -681,12 +607,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityRoleModel>(roleModel);
                     }
                     return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleFoundMessage);
@@ -695,7 +616,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc);
+                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -706,11 +627,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(id);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByRole(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByRole(entity.Id);
                     _roleDal.DeleteEntity(id);
                     return new SuccessResult();
                 }
@@ -718,7 +635,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -729,11 +646,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByRole(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByRole(entity.Id);
                     _roleDal.DeleteEntity(guid);
                     return new SuccessResult();
                 }
@@ -741,7 +654,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -752,11 +665,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(e => e.Name == name);
                 if (entity != null)
                 {
-                    var result = DeleteUserRolesByRole(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
-                    }
+                    DeleteUserRolesByRole(entity.Id);
                     _roleDal.DeleteEntity(entity);
                     return new SuccessResult();
                 }
@@ -764,7 +673,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
         #endregion
@@ -779,7 +688,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -792,7 +701,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -805,7 +714,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -818,7 +727,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityClaimModel>>(exc);
+                return new ErrorResult<List<IdentityClaimModel>>(exc, ShowException);
             }
         }
 
@@ -835,18 +744,14 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _claimDal.AddEntity(entity);
                     UpdateClaimModelIds(claimModel, entity);
-                    var result = AddUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    AddUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                     return new SuccessResult<IdentityClaimModel>(claimModel);
                 }
                 return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimFoundMessage);
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -863,12 +768,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityClaimModel>(claimModel);
                     }
                     return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimFoundMessage);
@@ -877,7 +777,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -894,12 +794,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityClaimModel>(claimModel);
                     }
                     return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimFoundMessage);
@@ -908,7 +803,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -925,12 +820,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
-                        if (!result.Success)
-                        {
-                            return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
-                                result.Exception);
-                        }
+                        UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         return new SuccessResult<IdentityClaimModel>(claimModel);
                     }
                     return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimFoundMessage);
@@ -939,7 +829,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc);
+                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -950,11 +840,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _claimDal.GetEntity(id);
                 if (entity != null)
                 {
-                    var result = DeleteUserClaimsByClaim(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserClaimsByClaim(entity.Id);
                     _claimDal.DeleteEntity(id);
                     return new SuccessResult();
                 }
@@ -962,7 +848,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -973,11 +859,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _claimDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    var result = DeleteUserClaimsByClaim(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserClaimsByClaim(entity.Id);
                     _claimDal.DeleteEntity(guid);
                     return new SuccessResult();
                 }
@@ -985,7 +867,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
 
@@ -996,11 +878,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _claimDal.GetEntity(e => e.Type == type);
                 if (entity != null)
                 {
-                    var result = DeleteUserClaimsByClaim(entity.Id);
-                    if (!result.Success)
-                    {
-                        return new ErrorResult(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
-                    }
+                    DeleteUserClaimsByClaim(entity.Id);
                     _claimDal.DeleteEntity(entity);
                     return new SuccessResult();
                 }
@@ -1008,7 +886,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc);
+                return new ErrorResult(exc, ShowException);
             }
         }
         #endregion
@@ -1038,16 +916,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 UpdateDate = user.UpdateDate
             };
             var rolesResult = GetRolesByUser(model.Id);
-            if (rolesResult.Exception)
-            {
-                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage, rolesResult.Exception);
-            }
             model.IdentityRoles = rolesResult.Data;
             var claimsResult = GetClaimsByUser(model.Id);
-            if (claimsResult.Exception)
-            {
-                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage, claimsResult.Exception);
-            }
             model.IdentityClaims = claimsResult.Data;
             return new SuccessResult<IdentityUserModel>(model);
         }
@@ -1079,29 +949,12 @@ namespace AppCore.Business.Concretes.Services.Identity
             {
                 Result<List<IdentityRoleModel>> rolesResult;
                 Result<List<IdentityClaimModel>> claimsResult;
-                Result<List<IdentityUserModel>> result = null;
                 foreach (var user in model)
                 {
                     rolesResult = GetRolesByUser(user.Id);
-                    if (rolesResult.Exception)
-                    {
-                        result = new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UserRolesErrorMessage,
-                            rolesResult.Exception);
-                        break;
-                    }
                     user.IdentityRoles = rolesResult.Data;
                     claimsResult = GetClaimsByUser(user.Id);
-                    if (claimsResult.Exception)
-                    {
-                        result = new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UserClaimsErrorMessage,
-                            claimsResult.Exception);
-                        break;
-                    }
                     user.IdentityClaims = claimsResult.Data;
-                }
-                if (result != null)
-                {
-                    return result;
                 }
             }
             return new SuccessResult<List<IdentityUserModel>>(model);
@@ -1138,10 +991,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Description = role.Description
             };
             var usersResult = GetUsersByRole(model.Id);
-            if (usersResult.Exception)
-            {
-                return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage, usersResult.Exception);
-            }
             model.IdentityUsers = usersResult.Data;
             return new SuccessResult<IdentityRoleModel>(model);
         }
@@ -1161,20 +1010,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }).ToList();
             if (includeUsers)
             {
-                Result<List<IdentityUserModel>> usersResult = null;
+                Result<List<IdentityUserModel>> usersResult;
                 foreach (var role in model)
                 {
                     usersResult = GetUsersByRole(role.Id);
-                    if (usersResult.Exception)
-                    {
-                        break;
-                    }
                     role.IdentityUsers = usersResult.Data;
-                }
-                if (usersResult != null && usersResult.Exception)
-                {
-                    return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.UserRolesErrorMessage,
-                        usersResult.Exception);
                 }
             }
             return new SuccessResult<List<IdentityRoleModel>>(model);
@@ -1207,10 +1047,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Value = claim.Value
             };
             var usersResult = GetUsersByClaim(model.Id);
-            if (usersResult.Exception)
-            {
-                return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage, usersResult.Exception);
-            }
             model.IdentityUsers = usersResult.Data;
             return new SuccessResult<IdentityClaimModel>(model);
         }
@@ -1230,20 +1066,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }).ToList();
             if (includeUsers)
             {
-                Result<List<IdentityUserModel>> usersResult = null;
+                Result<List<IdentityUserModel>> usersResult;
                 foreach (var claim in model)
                 {
                     usersResult = GetUsersByClaim(claim.Id);
-                    if (usersResult.Exception)
-                    {
-                        break;
-                    }
                     claim.IdentityUsers = usersResult.Data;
-                }
-                if (usersResult != null && usersResult.Exception)
-                {
-                    return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.UserClaimsErrorMessage,
-                        usersResult.Exception);
                 }
             }
             return new SuccessResult<List<IdentityClaimModel>>(model);
@@ -1264,165 +1091,97 @@ namespace AppCore.Business.Concretes.Services.Identity
         #region IdentityUserRole Private Methods
         private Result<List<IdentityUserModel>> GetUsersByRole(int roleId)
         {
-            try
+            var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId, "IdentityUser");
+            if (userRoles.Count == 0)
             {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId, "IdentityUser");
-                if (userRoles.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-                }
-                return GetUsersModel(userRoles.Select(e => e.IdentityUser).ToList(), false);
+                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
             }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(exc);
-            }
+            return GetUsersModel(userRoles.Select(e => e.IdentityUser).ToList(), false);
         }
 
         private Result<List<IdentityRoleModel>> GetRolesByUser(int userId)
         {
-            try
+            var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId, "IdentityRole");
+            if (userRoles.Count == 0)
             {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId, "IdentityRole");
-                if (userRoles.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
-                }
-                return GetRolesModel(userRoles.Select(e => e.IdentityRole).ToList(), false);
+                return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
             }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityRoleModel>>(exc);
-            }
+            return GetRolesModel(userRoles.Select(e => e.IdentityRole).ToList(), false);
         }
 
-        private Result AddUserRolesByUser(List<IdentityRoleModel> roles, int userId)
+        private void AddUserRolesByUser(List<IdentityRoleModel> roles, int userId)
         {
-            try
+            if (roles != null && roles.Count > 0)
             {
-                if (roles != null && roles.Count > 0)
+                _userRoleDal.Commit = false;
+                foreach (var role in roles)
                 {
-                    _userRoleDal.Commit = false;
-                    foreach (var role in roles)
+                    var userRole = new IdentityUserRole()
                     {
-                        var userRole = new IdentityUserRole()
-                        {
-                            IdentityUserId = userId,
-                            IdentityRoleId = role.Id
-                        };
-                        _userRoleDal.AddEntity(userRole);
-                    }
-                    _userRoleDal.SaveChanges();
+                        IdentityUserId = userId,
+                        IdentityRoleId = role.Id
+                    };
+                    _userRoleDal.AddEntity(userRole);
                 }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userRoleDal.SaveChanges();
             }
         }
 
-        private Result AddUserRolesByRole(List<IdentityUserModel> users, int roleId)
+        private void AddUserRolesByRole(List<IdentityUserModel> users, int roleId)
         {
-            try
+            if (users != null && users.Count > 0)
             {
-                if (users != null && users.Count > 0)
+                _userRoleDal.Commit = false;
+                foreach (var user in users)
                 {
-                    _userRoleDal.Commit = false;
-                    foreach (var user in users)
+                    var userRole = new IdentityUserRole()
                     {
-                        var userRole = new IdentityUserRole()
-                        {
-                            IdentityUserId = user.Id,
-                            IdentityRoleId = roleId
-                        };
-                        _userRoleDal.AddEntity(userRole);
-                    }
-                    _userRoleDal.SaveChanges();
+                        IdentityUserId = user.Id,
+                        IdentityRoleId = roleId
+                    };
+                    _userRoleDal.AddEntity(userRole);
                 }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userRoleDal.SaveChanges();
             }
         }
 
-        private Result UpdateUserRolesByUser(List<IdentityRoleModel> roles, int userId)
+        private void UpdateUserRolesByUser(List<IdentityRoleModel> roles, int userId)
         {
-            try
+            DeleteUserRolesByUser(userId);
+            AddUserRolesByUser(roles, userId);
+        }
+
+        private void UpdateUserRolesByRole(List<IdentityUserModel> users, int roleId)
+        {
+            DeleteUserRolesByRole(roleId);
+            AddUserRolesByRole(users, roleId);
+        }
+
+        private void DeleteUserRolesByUser(int userId)
+        {
+            var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId);
+            if (userRoles != null && userRoles.Count > 0)
             {
-                var result = DeleteUserRolesByUser(userId);
-                if (result.Success)
+                _userRoleDal.Commit = false;
+                foreach (var userRole in userRoles)
                 {
-                    return AddUserRolesByUser(roles, userId);
+                    _userRoleDal.DeleteEntity(userRole);
                 }
-                return result;
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userRoleDal.SaveChanges();
             }
         }
 
-        private Result UpdateUserRolesByRole(List<IdentityUserModel> users, int roleId)
+        private void DeleteUserRolesByRole(int roleId)
         {
-            try
+            var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId);
+            if (userRoles != null && userRoles.Count > 0)
             {
-                var result = DeleteUserRolesByRole(roleId);
-                if (result.Success)
+                _userRoleDal.Commit = false;
+                foreach (var userRole in userRoles)
                 {
-                    return AddUserRolesByRole(users, roleId);
+                    _userRoleDal.DeleteEntity(userRole);
                 }
-                return result;
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
-            }
-        }
-
-        private Result DeleteUserRolesByUser(int userId)
-        {
-            try
-            {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId);
-                if (userRoles != null && userRoles.Count > 0)
-                {
-                    _userRoleDal.Commit = false;
-                    foreach (var userRole in userRoles)
-                    {
-                        _userRoleDal.DeleteEntity(userRole);
-                    }
-                    _userRoleDal.SaveChanges();
-                }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
-            }
-        }
-
-        private Result DeleteUserRolesByRole(int roleId)
-        {
-            try
-            {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId);
-                if (userRoles != null && userRoles.Count > 0)
-                {
-                    _userRoleDal.Commit = false;
-                    foreach (var userRole in userRoles)
-                    {
-                        _userRoleDal.DeleteEntity(userRole);
-                    }
-                    _userRoleDal.SaveChanges();
-                }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userRoleDal.SaveChanges();
             }
         }
         #endregion
@@ -1430,165 +1189,97 @@ namespace AppCore.Business.Concretes.Services.Identity
         #region IdentityUserClaims Private Methods
         private Result<List<IdentityUserModel>> GetUsersByClaim(int claimId)
         {
-            try
+            var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId, "IdentityUser");
+            if (userClaims.Count == 0)
             {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId, "IdentityUser");
-                if (userClaims.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-                }
-                return GetUsersModel(userClaims.Select(e => e.IdentityUser).ToList(), false);
+                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
             }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(exc);
-            }
+            return GetUsersModel(userClaims.Select(e => e.IdentityUser).ToList(), false);
         }
 
         private Result<List<IdentityClaimModel>> GetClaimsByUser(int userId)
         {
-            try
+            var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId, "IdentityClaim");
+            if (userClaims.Count == 0)
             {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId, "IdentityClaim");
-                if (userClaims.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
-                }
-                return GetClaimsModel(userClaims.Select(e => e.IdentityClaim).ToList(), false);
+                return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
             }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityClaimModel>>(exc);
-            }
+            return GetClaimsModel(userClaims.Select(e => e.IdentityClaim).ToList(), false);
         }
 
-        private Result AddUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
+        private void AddUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
         {
-            try
+            if (claims != null && claims.Count > 0)
             {
-                if (claims != null && claims.Count > 0)
+                _userClaimDal.Commit = false;
+                foreach (var claim in claims)
                 {
-                    _userClaimDal.Commit = false;
-                    foreach (var claim in claims)
+                    var userClaim = new IdentityUserClaim()
                     {
-                        var userClaim = new IdentityUserClaim()
-                        {
-                            IdentityUserId = userId,
-                            IdentityClaimId = claim.Id
-                        };
-                        _userClaimDal.AddEntity(userClaim);
-                    }
-                    _userClaimDal.SaveChanges();
+                        IdentityUserId = userId,
+                        IdentityClaimId = claim.Id
+                    };
+                    _userClaimDal.AddEntity(userClaim);
                 }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userClaimDal.SaveChanges();
             }
         }
 
-        private Result AddUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
+        private void AddUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
         {
-            try
+            if (users != null && users.Count > 0)
             {
-                if (users != null && users.Count > 0)
+                _userClaimDal.Commit = false;
+                foreach (var user in users)
                 {
-                    _userClaimDal.Commit = false;
-                    foreach (var user in users)
+                    var userClaim = new IdentityUserClaim()
                     {
-                        var userClaim = new IdentityUserClaim()
-                        {
-                            IdentityUserId = user.Id,
-                            IdentityClaimId = claimId
-                        };
-                        _userClaimDal.AddEntity(userClaim);
-                    }
-                    _userClaimDal.SaveChanges();
+                        IdentityUserId = user.Id,
+                        IdentityClaimId = claimId
+                    };
+                    _userClaimDal.AddEntity(userClaim);
                 }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userClaimDal.SaveChanges();
             }
         }
 
-        private Result UpdateUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
+        private void UpdateUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
         {
-            try
+            DeleteUserClaimsByUser(userId);
+            AddUserClaimsByUser(claims, userId);
+        }
+
+        private void UpdateUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
+        {
+            DeleteUserClaimsByClaim(claimId);
+            AddUserClaimsByClaim(users, claimId);
+        }
+
+        private void DeleteUserClaimsByUser(int userId)
+        {
+            var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId);
+            if (userClaims != null && userClaims.Count > 0)
             {
-                var result = DeleteUserClaimsByUser(userId);
-                if (result.Success)
+                _userClaimDal.Commit = false;
+                foreach (var userClaim in userClaims)
                 {
-                    return AddUserClaimsByUser(claims, userId);
+                    _userClaimDal.DeleteEntity(userClaim);
                 }
-                return result;
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userClaimDal.SaveChanges();
             }
         }
 
-        private Result UpdateUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
+        private void DeleteUserClaimsByClaim(int claimId)
         {
-            try
+            var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId);
+            if (userClaims != null && userClaims.Count > 0)
             {
-                var result = DeleteUserClaimsByClaim(claimId);
-                if (result.Success)
+                _userClaimDal.Commit = false;
+                foreach (var userClaim in userClaims)
                 {
-                    return AddUserClaimsByClaim(users, claimId);
+                    _userClaimDal.DeleteEntity(userClaim);
                 }
-                return result;
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
-            }
-        }
-
-        private Result DeleteUserClaimsByUser(int userId)
-        {
-            try
-            {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId);
-                if (userClaims != null && userClaims.Count > 0)
-                {
-                    _userClaimDal.Commit = false;
-                    foreach (var userClaim in userClaims)
-                    {
-                        _userClaimDal.DeleteEntity(userClaim);
-                    }
-                    _userClaimDal.SaveChanges();
-                }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
-            }
-        }
-
-        private Result DeleteUserClaimsByClaim(int claimId)
-        {
-            try
-            {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId);
-                if (userClaims != null && userClaims.Count > 0)
-                {
-                    _userClaimDal.Commit = false;
-                    foreach (var userClaim in userClaims)
-                    {
-                        _userClaimDal.DeleteEntity(userClaim);
-                    }
-                    _userClaimDal.SaveChanges();
-                }
-                return new SuccessResult();
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult(exc);
+                _userClaimDal.SaveChanges();
             }
         }
         #endregion
