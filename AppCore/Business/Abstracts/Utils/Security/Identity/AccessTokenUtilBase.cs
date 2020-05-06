@@ -34,13 +34,13 @@ namespace AppCore.Business.Abstracts.Utils.Security.Identity
                 var claimList = new List<Claim>();
                 claimList.AddUserNameIdentifier(user.Guid);
                 claimList.AddUserName(user.UserName);
-                if (user.IdentityUserRoles != null && user.IdentityUserRoles.Count > 0)
+                if (user.IdentityRoles != null && user.IdentityRoles.Count > 0)
                 {
-                    claimList.AddRoleNames(user.IdentityUserRoles.Select(e => e.IdentityRole.Name).ToArray());
+                    claimList.AddRoleNames(user.IdentityRoles.Select(e => e.Name).ToArray());
                 }
-                if (user.IdentityUserClaims != null && user.IdentityUserClaims.Count > 0)
+                if (user.IdentityClaims != null && user.IdentityClaims.Count > 0)
                 {
-                    claimList.AddClaims(user.IdentityUserClaims.Select(e => e.IdentityClaim).ToList());
+                    claimList.AddClaims(user.IdentityClaims);
                 }
                 var expiration = DateTimeUtil.AddTimeToDate(DateTime.Now, 0, accessTokenOptions.AccessTokenExpirationMinutes);
                 var jwtSecurityToken = new JwtSecurityToken(accessTokenOptions.Issuer, accessTokenOptions.Audience, claimList,

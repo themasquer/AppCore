@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using AppCore.Business.Concretes.Models.Identity;
 using AppCore.Entities.Concretes.Identity;
 
 namespace AppCore.Business.Extensions
@@ -22,12 +23,12 @@ namespace AppCore.Business.Extensions
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userNameIdentifier));
         }
 
-        public static void AddClaim(this IList<Claim> claims, IdentityClaim claimItem)
+        public static void AddClaim(this IList<Claim> claims, IdentityClaimModel claimItem)
         {
             claims.Add(new Claim(claimItem.Type, claimItem.Value));
         }
 
-        public static void AddClaims(this IList<Claim> claims, List<IdentityClaim> claimList)
+        public static void AddClaims(this IList<Claim> claims, List<IdentityClaimModel> claimList)
         {
             claims = claimList.Select(e => new Claim(e.Type, e.Value)).ToList();
         }

@@ -6,6 +6,6 @@ namespace AppCore.Business.Concretes.Models.Identity
 {
     public class IdentityClaimModel : IdentityClaimBase
     {
-        public List<IdentityUserClaim> IdentityUserClaims { get; set; }
+        public List<IdentityUserModel> IdentityUsers { get; set; }
     }
 }

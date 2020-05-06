@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AppCore.Business.Concretes.Models.Identity;
+﻿using AppCore.Business.Concretes.Models.Identity;
 using AppCore.Business.Concretes.Models.Results;
 using AppCore.Entities.Concretes.Identity;
+using System.Collections.Generic;
 
 namespace AppCore.Business.Abstracts.Services.Identity
 {
@@ -16,9 +15,6 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityUser> GetUserEntity(int id, bool active = true);
         Result<IdentityUser> GetUserEntityByGuid(string guid, bool active = true);
         Result<List<IdentityUserModel>> GetUsers(bool onlyActive = false);
-        IQueryable<IdentityUser> GetUserQuery();
-        Result<IdentityUserModel> GetUserModel(IdentityUser user);
-        Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users);
         Result<IdentityUserModel> AddUser(IdentityUserModel userModel);
         Result<IdentityUserModel> UpdateUser(IdentityUserModel userModel);
         Result<IdentityUserModel> UpdateUserByGuid(IdentityUserModel userModel, string guid);
@@ -33,8 +29,6 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityRoleModel> GetRoleByGuid(string guid);
         Result<IdentityRoleModel> GetRoleByName(string name);
         Result<List<IdentityRoleModel>> GetRoles();
-        Result<IdentityRoleModel> GetRoleModel(IdentityRole role);
-        Result<List<IdentityRoleModel>> GetRolesModel(List<IdentityRole> roles);
         Result<IdentityRoleModel> AddRole(IdentityRoleModel roleModel);
         Result<IdentityRoleModel> UpdateRole(IdentityRoleModel roleModel);
         Result<IdentityRoleModel> UpdateRoleByGuid(IdentityRoleModel roleModel, string guid);
@@ -46,8 +40,6 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityClaimModel> GetClaimByGuid(string guid);
         Result<IdentityClaimModel> GetClaimByType(string type);
         Result<List<IdentityClaimModel>> GetClaims();
-        Result<IdentityClaimModel> GetClaimModel(IdentityClaim claim);
-        Result<List<IdentityClaimModel>> GetClaimsModel(List<IdentityClaim> claims);
         Result<IdentityClaimModel> AddClaim(IdentityClaimModel claimModel);
         Result<IdentityClaimModel> UpdateClaim(IdentityClaimModel claimModel);
         Result<IdentityClaimModel> UpdateClaimByGuid(IdentityClaimModel claimModel, string guid);
@@ -55,9 +47,5 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result DeleteClaim(int id);
         Result DeleteClaimByGuid(string guid);
         Result DeleteClaimByType(string type);
-        Result<List<IdentityUserModel>> GetUsersByRole(int roleId);
-        Result<List<IdentityRoleModel>> GetRolesByUser(int userId);
-        Result<List<IdentityUserModel>> GetUsersByClaim(int claimId);
-        Result<List<IdentityClaimModel>> GetClaimsByUser(int userId);
     }
 }

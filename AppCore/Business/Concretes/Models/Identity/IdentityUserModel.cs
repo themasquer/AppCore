@@ -10,7 +10,7 @@ namespace AppCore.Business.Concretes.Models.Identity
         [Required]
         public string Password { get; set; }
 
-        public List<IdentityUserRole> IdentityUserRoles { get; set; }
-        public List<IdentityUserClaim> IdentityUserClaims { get; set; }
+        public List<IdentityRoleModel> IdentityRoles { get; set; }
+        public List<IdentityClaimModel> IdentityClaims { get; set; }
     }
 }

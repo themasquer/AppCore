@@ -1,4 +1,5 @@
 ﻿using AppCore.Business.Abstracts.Services.Identity;
+using AppCore.Business.Concretes.Helpers.Security.Hash;
 using AppCore.Business.Concretes.Models.Identity;
 using AppCore.Business.Concretes.Models.Results;
 using AppCore.Business.Concretes.Models.Security.Hash;
@@ -8,7 +9,6 @@ using AppCore.Entities.Concretes.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AppCore.Business.Concretes.Helpers.Security.Hash;
 
 namespace AppCore.Business.Concretes.Services.Identity
 {
@@ -35,7 +35,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.UserName == userName && e.Active == active);
                 return GetUserModel(user);
             }
@@ -49,7 +49,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.UserName == userName && e.Active == active);
                 if (user != null)
                 {
@@ -71,7 +71,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.Id == id && e.Active == active);
                 return GetUserModel(user);
             }
@@ -85,7 +85,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.Guid == guid && e.Active == active);
                 return GetUserModel(user);
             }
@@ -99,7 +99,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.UserName == userName && e.Active == active);
                 if (user == null)
                 {
@@ -117,7 +117,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.Id == id && e.Active == active);
                 if (user == null)
                 {
@@ -135,7 +135,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 var user = query.SingleOrDefault(e => e.Guid == guid && e.Active == active);
                 if (user == null)
                 {
@@ -153,7 +153,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                var query = GetUserQuery();
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
                 if (onlyActive)
                 {
                     query = query.Where(e => e.Active == true);
@@ -165,106 +165,6 @@ namespace AppCore.Business.Concretes.Services.Identity
             {
                 return new ErrorResult<List<IdentityUserModel>>(exc);
             }
-        }
-
-        public IQueryable<IdentityUser> GetUserQuery()
-        {
-            IQueryable<IdentityUser> userQuery = _userDal.GetEntityQuery("IdentityUserClaims", "IdentityUserRoles");
-            IQueryable<IdentityUserClaim> userClaimQuery = _userClaimDal.GetEntityQuery("IdentityClaim");
-            IQueryable<IdentityClaim> claimQuery = _claimDal.GetEntityQuery();
-            IQueryable<IdentityUserRole> userRoleQuery = _userRoleDal.GetEntityQuery("IdentityRole");
-            IQueryable<IdentityRole> roleQuery = _roleDal.GetEntityQuery();
-            IQueryable<IdentityUser> query = from user in userQuery
-                                             join userClaim in userClaimQuery
-                                                 on user.Id equals userClaim.IdentityUserId into userUserClaim
-                                             from subUserUserClaim in userUserClaim.DefaultIfEmpty()
-                                             join claim in claimQuery
-                                                 on subUserUserClaim.IdentityClaimId equals claim.Id into userClaimClaim
-                                             from subUserClaimClaim in userClaimClaim.DefaultIfEmpty()
-                                             join userRole in userRoleQuery
-                                                 on user.Id equals userRole.IdentityUserId into userUserRole
-                                             from subUserUserRole in userUserRole.DefaultIfEmpty()
-                                             join role in roleQuery
-                                                 on subUserUserRole.IdentityRoleId equals role.Id into userRoleRole
-                                             from subUserRoleRole in userRoleRole.DefaultIfEmpty()
-                                             select new IdentityUser()
-                                             {
-                                                 Id = user.Id,
-                                                 Guid = user.Guid,
-                                                 UserName = user.UserName,
-                                                 PasswordHash = user.PasswordHash,
-                                                 PasswordSalt = user.PasswordSalt,
-                                                 Email = user.Email,
-                                                 EmailConfirmed = user.EmailConfirmed,
-                                                 PhoneNumber = user.PhoneNumber,
-                                                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                                                 Active = user.Active,
-                                                 CreatedBy = user.CreatedBy,
-                                                 CreateDate = user.CreateDate,
-                                                 UpdatedBy = user.UpdatedBy,
-                                                 UpdateDate = user.UpdateDate,
-                                                 FirstName = user.FirstName,
-                                                 LastName = user.LastName,
-                                                 IdentityUserClaims = user.IdentityUserClaims,
-                                                 IdentityUserRoles = user.IdentityUserRoles
-                                             };
-            return query;
-        }
-
-        public Result<IdentityUserModel> GetUserModel(IdentityUser user)
-        {
-            if (user == null)
-            {
-                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
-            }
-            IdentityUserModel model = new IdentityUserModel()
-            {
-                Id = user.Id,
-                Guid = user.Guid,
-                UserName = user.UserName,
-                Email = user.Email,
-                EmailConfirmed = user.EmailConfirmed,
-                PhoneNumber = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Active = user.Active,
-                CreatedBy = user.CreatedBy,
-                CreateDate = user.CreateDate,
-                UpdatedBy = user.UpdatedBy,
-                UpdateDate = user.UpdateDate,
-                IdentityUserClaims = user.IdentityUserClaims,
-                IdentityUserRoles = user.IdentityUserRoles
-            };
-            return new SuccessResult<IdentityUserModel>(model);
-        }
-
-        public Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users)
-        {
-            if (users == null || users.Count == 0)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-            }
-            List<IdentityUserModel> model = users.Select(e => new IdentityUserModel()
-            {
-                Id = e.Id,
-                Guid = e.Guid,
-                UserName = e.UserName,
-                Email = e.Email,
-                EmailConfirmed = e.EmailConfirmed,
-                PhoneNumber = e.PhoneNumber,
-                PhoneNumberConfirmed = e.PhoneNumberConfirmed,
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                Active = e.Active,
-                CreatedBy = e.CreatedBy,
-                CreateDate = e.CreateDate,
-                UpdatedBy = e.UpdatedBy,
-                UpdateDate = e.UpdateDate,
-                IdentityUserClaims = e.IdentityUserClaims,
-                IdentityUserRoles = e.IdentityUserRoles
-            }).ToList();
-            return new SuccessResult<List<IdentityUserModel>>(model);
         }
 
         public Result<IdentityUserModel> AddUser(IdentityUserModel userModel)
@@ -292,12 +192,12 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _userDal.AddEntity(entity);
                     UpdateUserModelIds(userModel, entity);
-                    var result = AddUserRoles(userModel.IdentityUserRoles);
+                    var result = AddUserRolesByUser(userModel.IdentityRoles, entity.Id);
                     if (!result.Success)
                     {
                         return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
                     }
-                    result = AddUserClaims(userModel.IdentityUserClaims);
+                    result = AddUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                     if (!result.Success)
                     {
                         return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
@@ -333,13 +233,13 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
                                 result.Exception);
                         }
-                        result = UpdateUserClaimsByUser(userModel.IdentityUserClaims, entity.Id);
+                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -378,13 +278,13 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
                                 result.Exception);
                         }
-                        result = UpdateUserClaimsByUser(userModel.IdentityUserClaims, entity.Id);
+                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -423,13 +323,13 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.UpdateDate = userModel.UpdateDate ?? DateTime.Now;
                         _userDal.UpdateEntity(entity);
                         UpdateUserModelIds(userModel, entity);
-                        var result = UpdateUserRolesByUser(userModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByUser(userModel.IdentityRoles, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage,
                                 result.Exception);
                         }
-                        result = UpdateUserClaimsByUser(userModel.IdentityUserClaims, entity.Id);
+                        result = UpdateUserClaimsByUser(userModel.IdentityClaims, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -678,40 +578,6 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityRoleModel> GetRoleModel(IdentityRole role)
-        {
-            if (role == null)
-            {
-                return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleNotFoundMessage);
-            }
-            IdentityRoleModel model = new IdentityRoleModel()
-            {
-                Id = role.Id,
-                Guid = role.Guid,
-                Name = role.Name,
-                Description = role.Description,
-                IdentityUserRoles = role.IdentityUserRoles
-            };
-            return new SuccessResult<IdentityRoleModel>(model);
-        }
-
-        public Result<List<IdentityRoleModel>> GetRolesModel(List<IdentityRole> roles)
-        {
-            if (roles == null || roles.Count == 0)
-            {
-                return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
-            }
-            List<IdentityRoleModel> model = roles.Select(e => new IdentityRoleModel()
-            {
-                Id = e.Id,
-                Guid = e.Guid,
-                Name = e.Name,
-                Description = e.Description,
-                IdentityUserRoles = e.IdentityUserRoles
-            }).ToList();
-            return new SuccessResult<List<IdentityRoleModel>>(model);
-        }
-
         public Result<IdentityRoleModel> AddRole(IdentityRoleModel roleModel)
         {
             try
@@ -725,7 +591,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _roleDal.AddEntity(entity);
                     UpdateRoleModelIds(roleModel, entity);
-                    var result = AddUserRoles(roleModel.IdentityUserRoles);
+                    var result = AddUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                     if (!result.Success)
                     {
                         return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage, result.Exception);
@@ -753,7 +619,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
@@ -784,7 +650,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
@@ -815,7 +681,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Description = roleModel.Description;
                         _roleDal.UpdateEntity(entity);
                         UpdateRoleModelIds(roleModel, entity);
-                        var result = UpdateUserRolesByRole(roleModel.IdentityUserRoles, entity.Id);
+                        var result = UpdateUserRolesByRole(roleModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage,
@@ -956,40 +822,6 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityClaimModel> GetClaimModel(IdentityClaim claim)
-        {
-            if (claim == null)
-            {
-                return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimNotFoundMessage);
-            }
-            IdentityClaimModel model = new IdentityClaimModel()
-            {
-                Id = claim.Id,
-                Guid = claim.Guid,
-                Type = claim.Type,
-                Value = claim.Value,
-                IdentityUserClaims = claim.IdentityUserClaims
-            };
-            return new SuccessResult<IdentityClaimModel>(model);
-        }
-
-        public Result<List<IdentityClaimModel>> GetClaimsModel(List<IdentityClaim> claims)
-        {
-            if (claims == null || claims.Count == 0)
-            {
-                return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
-            }
-            List<IdentityClaimModel> model = claims.Select(e => new IdentityClaimModel()
-            {
-                Id = e.Id,
-                Guid = e.Guid,
-                Type = e.Type,
-                Value = e.Value,
-                IdentityUserClaims = e.IdentityUserClaims
-            }).ToList();
-            return new SuccessResult<List<IdentityClaimModel>>(model);
-        }
-
         public Result<IdentityClaimModel> AddClaim(IdentityClaimModel claimModel)
         {
             try
@@ -1003,7 +835,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     };
                     _claimDal.AddEntity(entity);
                     UpdateClaimModelIds(claimModel, entity);
-                    var result = AddUserClaims(claimModel.IdentityUserClaims);
+                    var result = AddUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                     if (!result.Success)
                     {
                         return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage, result.Exception);
@@ -1031,7 +863,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUserClaims, entity.Id);
+                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -1062,7 +894,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUserClaims, entity.Id);
+                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -1093,7 +925,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                         entity.Value = claimModel.Value;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
-                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUserClaims, entity.Id);
+                        var result = UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
                         if (!result.Success)
                         {
                             return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage,
@@ -1181,79 +1013,100 @@ namespace AppCore.Business.Concretes.Services.Identity
         }
         #endregion
 
-        #region IdentityUserRole
-        public Result<List<IdentityUserModel>> GetUsersByRole(int roleId)
-        {
-            try
-            {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId, "IdentityUser");
-                if (userRoles.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-                }
-                return GetUsersModel(userRoles.Select(e => e.IdentityUser).ToList());
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(exc);
-            }
-        }
-
-        public Result<List<IdentityRoleModel>> GetRolesByUser(int userId)
-        {
-            try
-            {
-                var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId, "IdentityRole");
-                if (userRoles.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
-                }
-                return GetRolesModel(userRoles.Select(e => e.IdentityRole).ToList());
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityRoleModel>>(exc);
-            }
-        }
-        #endregion
-
-        #region IdentityUserClaim
-        public Result<List<IdentityUserModel>> GetUsersByClaim(int claimId)
-        {
-            try
-            {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId, "IdentityUser");
-                if (userClaims.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-                }
-                return GetUsersModel(userClaims.Select(e => e.IdentityUser).ToList());
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(exc);
-            }
-        }
-
-        public Result<List<IdentityClaimModel>> GetClaimsByUser(int userId)
-        {
-            try
-            {
-                var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId, "IdentityClaim");
-                if (userClaims.Count == 0)
-                {
-                    return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
-                }
-                return GetClaimsModel(userClaims.Select(e => e.IdentityClaim).ToList());
-            }
-            catch (Exception exc)
-            {
-                return new ErrorResult<List<IdentityClaimModel>>(exc);
-            }
-        }
-        #endregion
-
         #region IdentityUser Private Methods
+        private Result<IdentityUserModel> GetUserModel(IdentityUser user)
+        {
+            if (user == null)
+            {
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            IdentityUserModel model = new IdentityUserModel()
+            {
+                Id = user.Id,
+                Guid = user.Guid,
+                UserName = user.UserName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Active = user.Active,
+                CreatedBy = user.CreatedBy,
+                CreateDate = user.CreateDate,
+                UpdatedBy = user.UpdatedBy,
+                UpdateDate = user.UpdateDate
+            };
+            var rolesResult = GetRolesByUser(model.Id);
+            if (rolesResult.Exception)
+            {
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserRolesErrorMessage, rolesResult.Exception);
+            }
+            model.IdentityRoles = rolesResult.Data;
+            var claimsResult = GetClaimsByUser(model.Id);
+            if (claimsResult.Exception)
+            {
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserClaimsErrorMessage, claimsResult.Exception);
+            }
+            model.IdentityClaims = claimsResult.Data;
+            return new SuccessResult<IdentityUserModel>(model);
+        }
+
+        private Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users, bool includeRolesAndCliams = true)
+        {
+            if (users == null || users.Count == 0)
+            {
+                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
+            }
+            List<IdentityUserModel> model = users.Select(e => new IdentityUserModel()
+            {
+                Id = e.Id,
+                Guid = e.Guid,
+                UserName = e.UserName,
+                Email = e.Email,
+                EmailConfirmed = e.EmailConfirmed,
+                PhoneNumber = e.PhoneNumber,
+                PhoneNumberConfirmed = e.PhoneNumberConfirmed,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Active = e.Active,
+                CreatedBy = e.CreatedBy,
+                CreateDate = e.CreateDate,
+                UpdatedBy = e.UpdatedBy,
+                UpdateDate = e.UpdateDate
+            }).ToList();
+            if (includeRolesAndCliams)
+            {
+                Result<List<IdentityRoleModel>> rolesResult;
+                Result<List<IdentityClaimModel>> claimsResult;
+                Result<List<IdentityUserModel>> result = null;
+                foreach (var user in model)
+                {
+                    rolesResult = GetRolesByUser(user.Id);
+                    if (rolesResult.Exception)
+                    {
+                        result = new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UserRolesErrorMessage,
+                            rolesResult.Exception);
+                        break;
+                    }
+                    user.IdentityRoles = rolesResult.Data;
+                    claimsResult = GetClaimsByUser(user.Id);
+                    if (claimsResult.Exception)
+                    {
+                        result = new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UserClaimsErrorMessage,
+                            claimsResult.Exception);
+                        break;
+                    }
+                    user.IdentityClaims = claimsResult.Data;
+                }
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return new SuccessResult<List<IdentityUserModel>>(model);
+        }
+
         private bool UserExists(string userName, bool onlyActive = false)
         {
             if (onlyActive)
@@ -1271,6 +1124,62 @@ namespace AppCore.Business.Concretes.Services.Identity
         #endregion
 
         #region IdentityRole Private Methods
+        private Result<IdentityRoleModel> GetRoleModel(IdentityRole role)
+        {
+            if (role == null)
+            {
+                return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.RoleNotFoundMessage);
+            }
+            IdentityRoleModel model = new IdentityRoleModel()
+            {
+                Id = role.Id,
+                Guid = role.Guid,
+                Name = role.Name,
+                Description = role.Description
+            };
+            var usersResult = GetUsersByRole(model.Id);
+            if (usersResult.Exception)
+            {
+                return new ErrorResult<IdentityRoleModel>(IdentityServiceConfig.UserRolesErrorMessage, usersResult.Exception);
+            }
+            model.IdentityUsers = usersResult.Data;
+            return new SuccessResult<IdentityRoleModel>(model);
+        }
+
+        private Result<List<IdentityRoleModel>> GetRolesModel(List<IdentityRole> roles, bool includeUsers = true)
+        {
+            if (roles == null || roles.Count == 0)
+            {
+                return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
+            }
+            List<IdentityRoleModel> model = roles.Select(e => new IdentityRoleModel()
+            {
+                Id = e.Id,
+                Guid = e.Guid,
+                Name = e.Name,
+                Description = e.Description
+            }).ToList();
+            if (includeUsers)
+            {
+                Result<List<IdentityUserModel>> usersResult = null;
+                foreach (var role in model)
+                {
+                    usersResult = GetUsersByRole(role.Id);
+                    if (usersResult.Exception)
+                    {
+                        break;
+                    }
+                    role.IdentityUsers = usersResult.Data;
+                }
+                if (usersResult != null && usersResult.Exception)
+                {
+                    return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.UserRolesErrorMessage,
+                        usersResult.Exception);
+                }
+            }
+            return new SuccessResult<List<IdentityRoleModel>>(model);
+        }
+
         private bool RoleExists(string name)
         {
             return _roleDal.EntityExists(e => e.Name == name);
@@ -1284,6 +1193,62 @@ namespace AppCore.Business.Concretes.Services.Identity
         #endregion
 
         #region IdentityClaim Private Methods
+        private Result<IdentityClaimModel> GetClaimModel(IdentityClaim claim)
+        {
+            if (claim == null)
+            {
+                return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimNotFoundMessage);
+            }
+            IdentityClaimModel model = new IdentityClaimModel()
+            {
+                Id = claim.Id,
+                Guid = claim.Guid,
+                Type = claim.Type,
+                Value = claim.Value
+            };
+            var usersResult = GetUsersByClaim(model.Id);
+            if (usersResult.Exception)
+            {
+                return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.UserClaimsErrorMessage, usersResult.Exception);
+            }
+            model.IdentityUsers = usersResult.Data;
+            return new SuccessResult<IdentityClaimModel>(model);
+        }
+
+        private Result<List<IdentityClaimModel>> GetClaimsModel(List<IdentityClaim> claims, bool includeUsers = true)
+        {
+            if (claims == null || claims.Count == 0)
+            {
+                return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
+            }
+            List<IdentityClaimModel> model = claims.Select(e => new IdentityClaimModel()
+            {
+                Id = e.Id,
+                Guid = e.Guid,
+                Type = e.Type,
+                Value = e.Value
+            }).ToList();
+            if (includeUsers)
+            {
+                Result<List<IdentityUserModel>> usersResult = null;
+                foreach (var claim in model)
+                {
+                    usersResult = GetUsersByClaim(claim.Id);
+                    if (usersResult.Exception)
+                    {
+                        break;
+                    }
+                    claim.IdentityUsers = usersResult.Data;
+                }
+                if (usersResult != null && usersResult.Exception)
+                {
+                    return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.UserClaimsErrorMessage,
+                        usersResult.Exception);
+                }
+            }
+            return new SuccessResult<List<IdentityClaimModel>>(model);
+        }
+
         private bool ClaimExists(string type)
         {
             return _claimDal.EntityExists(e => e.Type == type);
@@ -1297,15 +1262,54 @@ namespace AppCore.Business.Concretes.Services.Identity
         #endregion
 
         #region IdentityUserRole Private Methods
-        private Result AddUserRoles(List<IdentityUserRole> userRoles)
+        private Result<List<IdentityUserModel>> GetUsersByRole(int roleId)
         {
             try
             {
-                if (userRoles != null && userRoles.Count > 0)
+                var userRoles = _userRoleDal.GetEntities(e => e.IdentityRoleId == roleId, "IdentityUser");
+                if (userRoles.Count == 0)
+                {
+                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
+                }
+                return GetUsersModel(userRoles.Select(e => e.IdentityUser).ToList(), false);
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult<List<IdentityUserModel>>(exc);
+            }
+        }
+
+        private Result<List<IdentityRoleModel>> GetRolesByUser(int userId)
+        {
+            try
+            {
+                var userRoles = _userRoleDal.GetEntities(e => e.IdentityUserId == userId, "IdentityRole");
+                if (userRoles.Count == 0)
+                {
+                    return new ErrorResult<List<IdentityRoleModel>>(IdentityServiceConfig.RolesNotFoundMessage);
+                }
+                return GetRolesModel(userRoles.Select(e => e.IdentityRole).ToList(), false);
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult<List<IdentityRoleModel>>(exc);
+            }
+        }
+
+        private Result AddUserRolesByUser(List<IdentityRoleModel> roles, int userId)
+        {
+            try
+            {
+                if (roles != null && roles.Count > 0)
                 {
                     _userRoleDal.Commit = false;
-                    foreach (var userRole in userRoles)
+                    foreach (var role in roles)
                     {
+                        var userRole = new IdentityUserRole()
+                        {
+                            IdentityUserId = userId,
+                            IdentityRoleId = role.Id
+                        };
                         _userRoleDal.AddEntity(userRole);
                     }
                     _userRoleDal.SaveChanges();
@@ -1318,14 +1322,40 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        private Result UpdateUserRolesByUser(List<IdentityUserRole> userRoles, int userId)
+        private Result AddUserRolesByRole(List<IdentityUserModel> users, int roleId)
+        {
+            try
+            {
+                if (users != null && users.Count > 0)
+                {
+                    _userRoleDal.Commit = false;
+                    foreach (var user in users)
+                    {
+                        var userRole = new IdentityUserRole()
+                        {
+                            IdentityUserId = user.Id,
+                            IdentityRoleId = roleId
+                        };
+                        _userRoleDal.AddEntity(userRole);
+                    }
+                    _userRoleDal.SaveChanges();
+                }
+                return new SuccessResult();
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult(exc);
+            }
+        }
+
+        private Result UpdateUserRolesByUser(List<IdentityRoleModel> roles, int userId)
         {
             try
             {
                 var result = DeleteUserRolesByUser(userId);
                 if (result.Success)
                 {
-                    return AddUserRoles(userRoles);
+                    return AddUserRolesByUser(roles, userId);
                 }
                 return result;
             }
@@ -1335,14 +1365,14 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        private Result UpdateUserRolesByRole(List<IdentityUserRole> userRoles, int roleId)
+        private Result UpdateUserRolesByRole(List<IdentityUserModel> users, int roleId)
         {
             try
             {
                 var result = DeleteUserRolesByRole(roleId);
                 if (result.Success)
                 {
-                    return AddUserRoles(userRoles);
+                    return AddUserRolesByRole(users, roleId);
                 }
                 return result;
             }
@@ -1398,15 +1428,54 @@ namespace AppCore.Business.Concretes.Services.Identity
         #endregion
 
         #region IdentityUserClaims Private Methods
-        private Result AddUserClaims(List<IdentityUserClaim> userClaims)
+        private Result<List<IdentityUserModel>> GetUsersByClaim(int claimId)
         {
             try
             {
-                if (userClaims != null && userClaims.Count > 0)
+                var userClaims = _userClaimDal.GetEntities(e => e.IdentityClaimId == claimId, "IdentityUser");
+                if (userClaims.Count == 0)
+                {
+                    return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
+                }
+                return GetUsersModel(userClaims.Select(e => e.IdentityUser).ToList(), false);
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult<List<IdentityUserModel>>(exc);
+            }
+        }
+
+        private Result<List<IdentityClaimModel>> GetClaimsByUser(int userId)
+        {
+            try
+            {
+                var userClaims = _userClaimDal.GetEntities(e => e.IdentityUserId == userId, "IdentityClaim");
+                if (userClaims.Count == 0)
+                {
+                    return new ErrorResult<List<IdentityClaimModel>>(IdentityServiceConfig.ClaimsNotFoundMessage);
+                }
+                return GetClaimsModel(userClaims.Select(e => e.IdentityClaim).ToList(), false);
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult<List<IdentityClaimModel>>(exc);
+            }
+        }
+
+        private Result AddUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
+        {
+            try
+            {
+                if (claims != null && claims.Count > 0)
                 {
                     _userClaimDal.Commit = false;
-                    foreach (var userClaim in userClaims)
+                    foreach (var claim in claims)
                     {
+                        var userClaim = new IdentityUserClaim()
+                        {
+                            IdentityUserId = userId,
+                            IdentityClaimId = claim.Id
+                        };
                         _userClaimDal.AddEntity(userClaim);
                     }
                     _userClaimDal.SaveChanges();
@@ -1419,14 +1488,40 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        private Result UpdateUserClaimsByUser(List<IdentityUserClaim> userClaims, int userId)
+        private Result AddUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
+        {
+            try
+            {
+                if (users != null && users.Count > 0)
+                {
+                    _userClaimDal.Commit = false;
+                    foreach (var user in users)
+                    {
+                        var userClaim = new IdentityUserClaim()
+                        {
+                            IdentityUserId = user.Id,
+                            IdentityClaimId = claimId
+                        };
+                        _userClaimDal.AddEntity(userClaim);
+                    }
+                    _userClaimDal.SaveChanges();
+                }
+                return new SuccessResult();
+            }
+            catch (Exception exc)
+            {
+                return new ErrorResult(exc);
+            }
+        }
+
+        private Result UpdateUserClaimsByUser(List<IdentityClaimModel> claims, int userId)
         {
             try
             {
                 var result = DeleteUserClaimsByUser(userId);
                 if (result.Success)
                 {
-                    return AddUserClaims(userClaims);
+                    return AddUserClaimsByUser(claims, userId);
                 }
                 return result;
             }
@@ -1436,14 +1531,14 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        private Result UpdateUserClaimsByClaim(List<IdentityUserClaim> userClaims, int claimId)
+        private Result UpdateUserClaimsByClaim(List<IdentityUserModel> users, int claimId)
         {
             try
             {
                 var result = DeleteUserClaimsByClaim(claimId);
                 if (result.Success)
                 {
-                    return AddUserClaims(userClaims);
+                    return AddUserClaimsByClaim(users, claimId);
                 }
                 return result;
             }

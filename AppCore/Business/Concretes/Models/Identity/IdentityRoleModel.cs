@@ -6,6 +6,6 @@ namespace AppCore.Business.Concretes.Models.Identity
 {
     public class IdentityRoleModel : IdentityRoleBase
     {
-        public List<IdentityUserRole> IdentityUserRoles { get; set; }
+        public List<IdentityUserModel> IdentityUsers { get; set; }
     }
 }
