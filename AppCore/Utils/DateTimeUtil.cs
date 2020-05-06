@@ -198,5 +198,13 @@ namespace AppCore.Utils
             string second = dateTime.Second.ToString().PadLeft(2, '0');
             return year + "-" + month + "-" + day + dateTimeSeperator + hour + ":" + minute + ":" + second;
         }
+
+        public static DateTime AddTimeToDate(DateTime date, int hours = 0, int minutes = 0, int seconds = 0)
+        {
+            date = date.AddHours(hours);
+            date = date.AddMinutes(minutes);
+            date = date.AddSeconds(seconds);
+            return date;
+        }
     }
 }

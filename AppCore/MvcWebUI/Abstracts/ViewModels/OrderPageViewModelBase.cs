@@ -6,7 +6,7 @@ namespace AppCore.MvcWebUI.Abstracts.ViewModels
 {
     public abstract class OrderPageViewModelBase : OrderPageRecordBase 
     {
-        public virtual SelectList PageNumberSelectList => new SelectList(PageNumbers.Select(e => new SelectListItem()
+        public SelectList PageNumberSelectList => new SelectList(PageNumbers.Select(e => new SelectListItem()
         {
             Value = e.ToString(),
             Text = e.ToString()

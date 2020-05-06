@@ -1,4 +1,4 @@
-﻿namespace AppCore.Records.Abstracts.Results
+﻿namespace AppCore.Business.Abstracts.Models.Results
 {
     public interface IResultData<out TResultType>
     {

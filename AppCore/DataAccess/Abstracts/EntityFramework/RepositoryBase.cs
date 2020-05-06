@@ -687,6 +687,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
                     }
                     _context.SaveChanges();
                 }
+                Commit = true;
                 return deletedCount;
             }
             catch (Exception e)

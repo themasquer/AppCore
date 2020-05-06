@@ -11,14 +11,16 @@ namespace AppCore.Business.Abstracts.Utils
             _configuration = configuration;
         }
 
-        public virtual void BindAppSettings<T>(string sectionKey) where T : class, new()
+        public virtual T BindAppSettings<T>(string sectionKey = "AppSettings") where T : class, new()
         {
+            T t = null;
             var section = _configuration.GetSection(sectionKey);
             if (section != null)
             {
-                var appSettings = new T();
-                section.Bind(appSettings);
+                t = new T();
+                section.Bind(t);
             }
+            return t;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AppCore.MvcWebUI.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace AppCore.Business.Abstracts.Utils
+namespace AppCore.MvcWebUI.Abstracts.Utils
 {
     public abstract class SessionUtilBase<T> where T : class 
     {
