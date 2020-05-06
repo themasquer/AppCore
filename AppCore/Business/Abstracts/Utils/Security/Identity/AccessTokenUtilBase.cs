@@ -17,6 +17,8 @@ namespace AppCore.Business.Abstracts.Utils.Security.Identity
     {
         private readonly AppSettingsUtilBase _appSettingsUtil;
 
+        public bool ShowException { get; set; } = false;
+
         protected AccessTokenUtilBase(AppSettingsUtilBase appSettingsUtil)
         {
             _appSettingsUtil = appSettingsUtil;
@@ -56,7 +58,7 @@ namespace AppCore.Business.Abstracts.Utils.Security.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<AccessToken>(exc);
+                return new ExceptionResult<AccessToken>(exc, ShowException);
             }
         }
     }

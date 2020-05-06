@@ -43,7 +43,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -65,7 +65,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -79,7 +79,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -93,7 +93,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -111,7 +111,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc, ShowException);
+                return new ExceptionResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -129,7 +129,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc, ShowException);
+                return new ExceptionResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -147,7 +147,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUser>(exc, ShowException);
+                return new ExceptionResult<IdentityUser>(exc, ShowException);
             }
         }
 
@@ -165,7 +165,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityUserModel>>(exc, ShowException);
+                return new ExceptionResult<List<IdentityUserModel>>(exc, ShowException);
             }
         }
 
@@ -202,7 +202,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -237,7 +237,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -272,7 +272,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -307,7 +307,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -326,7 +326,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     entity.UpdateDate = DateTime.Now;
                     _userDal.UpdateEntity(entity);
                     var result = GetUserModel(entity);
-                    if (result.Success)
+                    if (result.Status == ResultStatus.Success)
                     {
                         result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
                     }
@@ -336,7 +336,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -355,7 +355,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     entity.UpdateDate = DateTime.Now;
                     _userDal.UpdateEntity(entity);
                     var result = GetUserModel(entity);
-                    if (result.Success)
+                    if (result.Status == ResultStatus.Success)
                     {
                         result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
                     }
@@ -365,7 +365,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -384,7 +384,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     entity.UpdateDate = DateTime.Now;
                     _userDal.UpdateEntity(entity);
                     var result = GetUserModel(entity);
-                    if (result.Success)
+                    if (result.Status == ResultStatus.Success)
                     {
                         result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
                     }
@@ -394,7 +394,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityUserModel>(exc, ShowException);
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
             }
         }
 
@@ -416,7 +416,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -438,7 +438,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -460,7 +460,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
         #endregion
@@ -475,7 +475,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -488,7 +488,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -501,7 +501,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -514,7 +514,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityRoleModel>>(exc, ShowException);
+                return new ExceptionResult<List<IdentityRoleModel>>(exc, ShowException);
             }
         }
 
@@ -538,7 +538,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -564,7 +564,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -590,7 +590,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -616,7 +616,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityRoleModel>(exc, ShowException);
+                return new ExceptionResult<IdentityRoleModel>(exc, ShowException);
             }
         }
 
@@ -635,7 +635,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -654,7 +654,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -673,7 +673,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
         #endregion
@@ -688,7 +688,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -701,7 +701,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -714,7 +714,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -727,7 +727,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<List<IdentityClaimModel>>(exc, ShowException);
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
             }
         }
 
@@ -751,7 +751,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -777,7 +777,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -803,7 +803,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -829,7 +829,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
             }
         }
 
@@ -848,7 +848,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -867,7 +867,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
 
@@ -886,7 +886,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
             catch (Exception exc)
             {
-                return new ErrorResult(exc, ShowException);
+                return new ExceptionResult(exc, ShowException);
             }
         }
         #endregion

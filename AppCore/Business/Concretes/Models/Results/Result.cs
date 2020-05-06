@@ -1,15 +1,16 @@
 ﻿using AppCore.Business.Abstracts.Models.Results;
+using AppCore.Business.Configs;
 
 namespace AppCore.Business.Concretes.Models.Results
 {
     public class Result
     {
-        public bool Success { get; }
+        public ResultStatus Status { get; }
         public string Message { get; set; }
 
-        protected Result(bool success, string message)
+        protected Result(ResultStatus status, string message)
         {
-            Success = success;
+            Status = status;
             Message = message;
         }
     }
@@ -18,7 +19,7 @@ namespace AppCore.Business.Concretes.Models.Results
     {
         public TResultType Data { get; }
 
-        protected Result(bool success, string message, TResultType data) : base(success, message)
+        protected Result(ResultStatus status, string message, TResultType data) : base(status, message)
         {
             Data = data;
         }
