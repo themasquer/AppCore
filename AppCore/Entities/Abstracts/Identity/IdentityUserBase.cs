@@ -1,14 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using AppCore.Records.Abstracts;
+﻿using AppCore.Records.Abstracts;
+using System;
 
 namespace AppCore.Entities.Abstracts.Identity
 {
     public abstract class IdentityUserBase : RecordBase, IRecordSoftDelete, IRecordCreatedBy, IRecordUpdatedBy
     {
-        [Required]
         public string UserName { get; set; }
-
         public string Email { get; set; }
         public bool? EmailConfirmed { get; set; }
         public string PhoneNumber { get; set; }

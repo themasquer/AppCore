@@ -311,7 +311,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityUserModel> UpdateUserPassword(int userId, string password)
+        public Result<IdentityUserModel> UpdateUserPassword(string password, int userId)
         {
             try
             {
@@ -340,7 +340,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityUserModel> UpdateUserPasswordByGuid(string guid, string password)
+        public Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid)
         {
             try
             {
@@ -369,7 +369,7 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityUserModel> UpdateUserPasswordByUserName(string userName, string password)
+        public Result<IdentityUserModel> UpdateUserPasswordByUserName(string password, string userName)
         {
             try
             {

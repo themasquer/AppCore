@@ -20,9 +20,9 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityUserModel> UpdateUser(IdentityUserModel userModel);
         Result<IdentityUserModel> UpdateUserByGuid(IdentityUserModel userModel, string guid);
         Result<IdentityUserModel> UpdateUserByUserName(IdentityUserModel userModel, string userName);
-        Result<IdentityUserModel> UpdateUserPassword(int userId, string password);
-        Result<IdentityUserModel> UpdateUserPasswordByGuid(string guid, string password);
-        Result<IdentityUserModel> UpdateUserPasswordByUserName(string userName, string password);
+        Result<IdentityUserModel> UpdateUserPassword(string password, int userId);
+        Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid);
+        Result<IdentityUserModel> UpdateUserPasswordByUserName(string password, string userName);
         Result DeleteUser(int id);
         Result DeleteUserByGuid(string guid);
         Result DeleteUserByUserName(string userName);
