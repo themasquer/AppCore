@@ -492,8 +492,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(id);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -514,8 +512,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(id);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -536,8 +532,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -558,8 +552,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -580,8 +572,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -602,8 +592,6 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
-                    DeleteUserRolesByUser(entity.Id);
-                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
