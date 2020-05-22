@@ -21,11 +21,17 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityUserModel> UpdateUserByGuid(IdentityUserModel userModel, string guid);
         Result<IdentityUserModel> UpdateUserByUserName(IdentityUserModel userModel, string userName);
         Result<IdentityUserModel> UpdateUserPassword(string password, int userId);
+        Result<IdentityUserModel> UpdateUserPassword(string password, int userId, string operationBy);
         Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid);
+        Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid, string operationBy);
         Result<IdentityUserModel> UpdateUserPasswordByUserName(string password, string userName);
+        Result<IdentityUserModel> UpdateUserPasswordByUserName(string password, string userName, string operationBy);
         Result DeleteUser(int id);
+        Result DeleteUser(int id, string operationBy);
         Result DeleteUserByGuid(string guid);
+        Result DeleteUserByGuid(string guid, string operationBy);
         Result DeleteUserByUserName(string userName);
+        Result DeleteUserByUserName(string userName, string operationBy);
         Result<IdentityRoleModel> GetRole(int id);
         Result<IdentityRoleModel> GetRoleByGuid(string guid);
         Result<IdentityRoleModel> GetRoleByName(string name);

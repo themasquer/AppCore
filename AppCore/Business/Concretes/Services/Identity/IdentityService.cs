@@ -340,6 +340,35 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
+        public Result<IdentityUserModel> UpdateUserPassword(string password, int userId, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(userId);
+                if (entity != null)
+                {
+                    var cryptoHelper = new CryptoHelper();
+                    Crypto crypto = cryptoHelper.CreateHash(password);
+                    entity.PasswordHash = crypto.Hash;
+                    entity.PasswordSalt = crypto.Salt;
+                    entity.UpdatedBy = operationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.UpdateEntity(entity);
+                    var result = GetUserModel(entity);
+                    if (result.Status == ResultStatus.Success)
+                    {
+                        result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
+                    }
+                    return result;
+                }
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
+            }
+        }
+
         public Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid)
         {
             try
@@ -352,6 +381,35 @@ namespace AppCore.Business.Concretes.Services.Identity
                     entity.PasswordHash = crypto.Hash;
                     entity.PasswordSalt = crypto.Salt;
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.UpdateEntity(entity);
+                    var result = GetUserModel(entity);
+                    if (result.Status == ResultStatus.Success)
+                    {
+                        result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
+                    }
+                    return result;
+                }
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
+            }
+        }
+
+        public Result<IdentityUserModel> UpdateUserPasswordByGuid(string password, string guid, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(guid);
+                if (entity != null)
+                {
+                    var cryptoHelper = new CryptoHelper();
+                    Crypto crypto = cryptoHelper.CreateHash(password);
+                    entity.PasswordHash = crypto.Hash;
+                    entity.PasswordSalt = crypto.Salt;
+                    entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.UpdateEntity(entity);
                     var result = GetUserModel(entity);
@@ -398,6 +456,35 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
+        public Result<IdentityUserModel> UpdateUserPasswordByUserName(string password, string userName, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(e => e.UserName == userName);
+                if (entity != null)
+                {
+                    var cryptoHelper = new CryptoHelper();
+                    Crypto crypto = cryptoHelper.CreateHash(password);
+                    entity.PasswordHash = crypto.Hash;
+                    entity.PasswordSalt = crypto.Salt;
+                    entity.UpdatedBy = operationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.UpdateEntity(entity);
+                    var result = GetUserModel(entity);
+                    if (result.Status == ResultStatus.Success)
+                    {
+                        result.Message = IdentityServiceConfig.PasswordUpdatedMessage;
+                    }
+                    return result;
+                }
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<IdentityUserModel>(exc, ShowException);
+            }
+        }
+
         public Result DeleteUser(int id)
         {
             try
@@ -408,6 +495,28 @@ namespace AppCore.Business.Concretes.Services.Identity
                     DeleteUserRolesByUser(entity.Id);
                     DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.DeleteEntity(entity);
+                    return new SuccessResult();
+                }
+                return new ErrorResult(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult(exc, ShowException);
+            }
+        }
+
+        public Result DeleteUser(int id, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(id);
+                if (entity != null)
+                {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
+                    entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
                     return new SuccessResult();
@@ -442,6 +551,28 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
+        public Result DeleteUserByGuid(string guid, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(guid);
+                if (entity != null)
+                {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
+                    entity.UpdatedBy = operationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.DeleteEntity(entity);
+                    return new SuccessResult();
+                }
+                return new ErrorResult(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult(exc, ShowException);
+            }
+        }
+
         public Result DeleteUserByUserName(string userName)
         {
             try
@@ -452,6 +583,28 @@ namespace AppCore.Business.Concretes.Services.Identity
                     DeleteUserRolesByUser(entity.Id);
                     DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
+                    entity.UpdateDate = DateTime.Now;
+                    _userDal.DeleteEntity(entity);
+                    return new SuccessResult();
+                }
+                return new ErrorResult(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult(exc, ShowException);
+            }
+        }
+
+        public Result DeleteUserByUserName(string userName, string operationBy)
+        {
+            try
+            {
+                var entity = _userDal.GetEntity(e => e.UserName == userName);
+                if (entity != null)
+                {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
+                    entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
                     return new SuccessResult();
