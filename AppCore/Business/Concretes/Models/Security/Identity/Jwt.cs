@@ -2,8 +2,8 @@
 
 namespace AppCore.Business.Concretes.Models.Security.Identity
 {
-    public class AccessTokenOptions : AccessTokenOptionsBase
+    public class Jwt : JwtBase
     {
-        
+
     }
 }

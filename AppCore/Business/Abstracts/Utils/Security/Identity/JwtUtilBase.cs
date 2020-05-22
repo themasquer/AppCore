@@ -13,24 +13,24 @@ using AppCore.Business.Configs;
 
 namespace AppCore.Business.Abstracts.Utils.Security.Identity
 {
-    public abstract class AccessTokenUtilBase
+    public abstract class JwtUtilBase
     {
         private readonly AppSettingsUtilBase _appSettingsUtil;
 
         public bool ShowException { get; set; } = false;
 
-        protected AccessTokenUtilBase(AppSettingsUtilBase appSettingsUtil)
+        protected JwtUtilBase(AppSettingsUtilBase appSettingsUtil)
         {
             _appSettingsUtil = appSettingsUtil;
         }
 
-        public virtual Result<AccessToken> CreateAccessToken(IdentityUserModel user, string appSettingsSectionKey = "AccessTokenOptions")
+        public virtual Result<Jwt> CreateJwt(IdentityUserModel user, string appSettingsSectionKey = "JwtOptions")
         {
             try
             {
-                var accessTokenOptions = _appSettingsUtil.BindAppSettings<AccessTokenOptions>(appSettingsSectionKey);
+                var jwtOptions = _appSettingsUtil.BindAppSettings<JwtOptions>(appSettingsSectionKey);
                 var securityKeyHelper = new SecurityKeyHelper();
-                var securityKey = securityKeyHelper.CreateSecurityKey(accessTokenOptions.SecurityKey);
+                var securityKey = securityKeyHelper.CreateSecurityKey(jwtOptions.SecurityKey);
                 var signingCredentialsHelper = new SigningCredentialsHelper();
                 var signingCredentials = signingCredentialsHelper.CreateSigningCredentials(securityKey);
                 var claimList = new List<Claim>();
@@ -44,21 +44,21 @@ namespace AppCore.Business.Abstracts.Utils.Security.Identity
                 {
                     claimList.AddClaims(user.IdentityClaims);
                 }
-                var expiration = DateTimeUtil.AddTimeToDate(DateTime.Now, 0, accessTokenOptions.AccessTokenExpirationMinutes);
-                var jwtSecurityToken = new JwtSecurityToken(accessTokenOptions.Issuer, accessTokenOptions.Audience, claimList,
+                var expiration = DateTimeUtil.AddTimeToDate(DateTime.Now, 0, jwtOptions.JwtExpirationMinutes);
+                var jwtSecurityToken = new JwtSecurityToken(jwtOptions.Issuer, jwtOptions.Audience, claimList,
                     DateTime.Now, expiration, signingCredentials);
                 var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
                 var token = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
-                var accessToken = new AccessToken()
+                var jwt = new Jwt()
                 {
                     Token = token,
                     Expiration = expiration
                 };
-                return new SuccessResult<AccessToken>(AccessTokenUtilConfig.AccessTokenCreatedMessage, accessToken);
+                return new SuccessResult<Jwt>(JwtUtilConfig.JwtCreatedMessage, jwt);
             }
             catch (Exception exc)
             {
-                return new ExceptionResult<AccessToken>(exc, ShowException);
+                return new ExceptionResult<Jwt>(exc, ShowException);
             }
         }
     }
