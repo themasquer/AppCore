@@ -1,13 +1,17 @@
-﻿using AppCore.Business.Concretes.Models.Identity;
+﻿using System;
+using AppCore.Business.Concretes.Models.Identity;
 using AppCore.Business.Concretes.Models.Results;
 using AppCore.Entities.Concretes.Identity;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace AppCore.Business.Abstracts.Services.Identity
 {
     public interface IIdentityService
     {
         bool ShowException { get; set; }
+        IQueryable<IdentityUser> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate);
         Result<IdentityUserModel> GetUserByUserName(string userName, bool active = true);
         Result<IdentityUserModel> GetUserByUserNameAndPassword(string userName, string password, bool active = true);
         Result<IdentityUserModel> GetUser(int id, bool active = true);
@@ -16,6 +20,8 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result<IdentityUser> GetUserEntity(int id, bool active = true);
         Result<IdentityUser> GetUserEntityByGuid(string guid, bool active = true);
         Result<List<IdentityUserModel>> GetUsers(bool onlyActive = false);
+        Result<IdentityUserModel> GetUserModel(IdentityUser user);
+        Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users, bool includeRolesAndCliams = true);
         Result<IdentityUserModel> AddUser(IdentityUserModel userModel);
         Result<IdentityUserModel> UpdateUser(IdentityUserModel userModel);
         Result<IdentityUserModel> UpdateUserByGuid(IdentityUserModel userModel, string guid);

@@ -9,6 +9,7 @@ using AppCore.Entities.Concretes.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace AppCore.Business.Concretes.Services.Identity
 {
@@ -33,6 +34,12 @@ namespace AppCore.Business.Concretes.Services.Identity
         }
 
         #region IdentityUser
+        public IQueryable<IdentityUser> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate)
+        {
+            var query = _userDal.GetEntityQuery(predicate, "IdentityUserRoles", "IdentityUserClaims");
+            return query;
+        }
+
         public Result<IdentityUserModel> GetUserByUserName(string userName, bool active = true)
         {
             try
@@ -167,6 +174,74 @@ namespace AppCore.Business.Concretes.Services.Identity
             {
                 return new ExceptionResult<List<IdentityUserModel>>(exc, ShowException);
             }
+        }
+
+        public Result<IdentityUserModel> GetUserModel(IdentityUser user)
+        {
+            if (user == null)
+            {
+                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
+            }
+            IdentityUserModel model = new IdentityUserModel()
+            {
+                Id = user.Id,
+                Guid = user.Guid,
+                UserName = user.UserName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Active = user.Active,
+                CreatedBy = user.CreatedBy,
+                CreateDate = user.CreateDate,
+                UpdatedBy = user.UpdatedBy,
+                UpdateDate = user.UpdateDate
+            };
+            var rolesResult = GetRolesByUser(model.Id);
+            model.IdentityRoles = rolesResult.Data;
+            var claimsResult = GetClaimsByUser(model.Id);
+            model.IdentityClaims = claimsResult.Data;
+            return new SuccessResult<IdentityUserModel>(model);
+        }
+
+        public Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users, bool includeRolesAndCliams = true)
+        {
+            if (users == null || users.Count == 0)
+            {
+                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
+            }
+            List<IdentityUserModel> model = users.Select(e => new IdentityUserModel()
+            {
+                Id = e.Id,
+                Guid = e.Guid,
+                UserName = e.UserName,
+                Email = e.Email,
+                EmailConfirmed = e.EmailConfirmed,
+                PhoneNumber = e.PhoneNumber,
+                PhoneNumberConfirmed = e.PhoneNumberConfirmed,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Active = e.Active,
+                CreatedBy = e.CreatedBy,
+                CreateDate = e.CreateDate,
+                UpdatedBy = e.UpdatedBy,
+                UpdateDate = e.UpdateDate
+            }).ToList();
+            if (includeRolesAndCliams)
+            {
+                Result<List<IdentityRoleModel>> rolesResult;
+                Result<List<IdentityClaimModel>> claimsResult;
+                foreach (var user in model)
+                {
+                    rolesResult = GetRolesByUser(user.Id);
+                    user.IdentityRoles = rolesResult.Data;
+                    claimsResult = GetClaimsByUser(user.Id);
+                    user.IdentityClaims = claimsResult.Data;
+                }
+            }
+            return new SuccessResult<List<IdentityUserModel>>(model);
         }
 
         public Result<IdentityUserModel> AddUser(IdentityUserModel userModel)
@@ -1012,74 +1087,6 @@ namespace AppCore.Business.Concretes.Services.Identity
         #endregion
 
         #region IdentityUser Private Methods
-        private Result<IdentityUserModel> GetUserModel(IdentityUser user)
-        {
-            if (user == null)
-            {
-                return new ErrorResult<IdentityUserModel>(IdentityServiceConfig.UserNotFoundMessage);
-            }
-            IdentityUserModel model = new IdentityUserModel()
-            {
-                Id = user.Id,
-                Guid = user.Guid,
-                UserName = user.UserName,
-                Email = user.Email,
-                EmailConfirmed = user.EmailConfirmed,
-                PhoneNumber = user.PhoneNumber,
-                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Active = user.Active,
-                CreatedBy = user.CreatedBy,
-                CreateDate = user.CreateDate,
-                UpdatedBy = user.UpdatedBy,
-                UpdateDate = user.UpdateDate
-            };
-            var rolesResult = GetRolesByUser(model.Id);
-            model.IdentityRoles = rolesResult.Data;
-            var claimsResult = GetClaimsByUser(model.Id);
-            model.IdentityClaims = claimsResult.Data;
-            return new SuccessResult<IdentityUserModel>(model);
-        }
-
-        private Result<List<IdentityUserModel>> GetUsersModel(List<IdentityUser> users, bool includeRolesAndCliams = true)
-        {
-            if (users == null || users.Count == 0)
-            {
-                return new ErrorResult<List<IdentityUserModel>>(IdentityServiceConfig.UsersNotFoundMessage);
-            }
-            List<IdentityUserModel> model = users.Select(e => new IdentityUserModel()
-            {
-                Id = e.Id,
-                Guid = e.Guid,
-                UserName = e.UserName,
-                Email = e.Email,
-                EmailConfirmed = e.EmailConfirmed,
-                PhoneNumber = e.PhoneNumber,
-                PhoneNumberConfirmed = e.PhoneNumberConfirmed,
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                Active = e.Active,
-                CreatedBy = e.CreatedBy,
-                CreateDate = e.CreateDate,
-                UpdatedBy = e.UpdatedBy,
-                UpdateDate = e.UpdateDate
-            }).ToList();
-            if (includeRolesAndCliams)
-            {
-                Result<List<IdentityRoleModel>> rolesResult;
-                Result<List<IdentityClaimModel>> claimsResult;
-                foreach (var user in model)
-                {
-                    rolesResult = GetRolesByUser(user.Id);
-                    user.IdentityRoles = rolesResult.Data;
-                    claimsResult = GetClaimsByUser(user.Id);
-                    user.IdentityClaims = claimsResult.Data;
-                }
-            }
-            return new SuccessResult<List<IdentityUserModel>>(model);
-        }
-
         private bool UserExists(string userName, int id = 0)
         {
             return _userDal.EntityExists(e => e.Id != id && e.UserName == userName);
