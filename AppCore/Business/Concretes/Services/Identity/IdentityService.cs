@@ -34,6 +34,12 @@ namespace AppCore.Business.Concretes.Services.Identity
         }
 
         #region IdentityUser
+        public IQueryable<IdentityUser> GetUserQuery()
+        {
+            var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
+            return query;
+        }
+
         public IQueryable<IdentityUser> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate)
         {
             var query = _userDal.GetEntityQuery(predicate, "IdentityUserRoles", "IdentityUserClaims");
