@@ -11,8 +11,8 @@ namespace AppCore.Business.Abstracts.Services.Identity
     public interface IIdentityService
     {
         bool ShowException { get; set; }
-        IQueryable<IdentityUser> GetUserQuery();
-        IQueryable<IdentityUser> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate);
+        Result<IQueryable<IdentityUser>> GetUserQuery();
+        Result<IQueryable<IdentityUser>> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate);
         Result<IdentityUserModel> GetUserByUserName(string userName, bool active = true);
         Result<IdentityUserModel> GetUserByUserNameAndPassword(string userName, string password, bool active = true);
         Result<IdentityUserModel> GetUser(int id, bool active = true);

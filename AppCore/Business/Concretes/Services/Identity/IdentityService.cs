@@ -34,16 +34,30 @@ namespace AppCore.Business.Concretes.Services.Identity
         }
 
         #region IdentityUser
-        public IQueryable<IdentityUser> GetUserQuery()
+        public Result<IQueryable<IdentityUser>> GetUserQuery()
         {
-            var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
-            return query;
+            try
+            {
+                var query = _userDal.GetEntityQuery("IdentityUserRoles", "IdentityUserClaims");
+                return new SuccessResult<IQueryable<IdentityUser>>(query);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<IQueryable<IdentityUser>>(exc, ShowException);
+            }
         }
 
-        public IQueryable<IdentityUser> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate)
+        public Result<IQueryable<IdentityUser>> GetUserQuery(Expression<Func<IdentityUser, bool>> predicate)
         {
-            var query = _userDal.GetEntityQuery(predicate, "IdentityUserRoles", "IdentityUserClaims");
-            return query;
+            try
+            {
+                var query = _userDal.GetEntityQuery(predicate, "IdentityUserRoles", "IdentityUserClaims");
+                return new SuccessResult<IQueryable<IdentityUser>>(query);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<IQueryable<IdentityUser>>(exc, ShowException);
+            }
         }
 
         public Result<IdentityUserModel> GetUserByUserName(string userName, bool active = true)
