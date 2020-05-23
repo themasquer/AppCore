@@ -213,7 +213,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(userModel.Id);
                 if (entity != null)
                 {
-                    if (!UserExists(userModel.UserName))
+                    if (!UserExists(userModel.UserName, entity.Id))
                     {
                         entity.UserName = userModel.UserName;
                         entity.Email = userModel.Email;
@@ -248,7 +248,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    if (!UserExists(userModel.UserName))
+                    if (!UserExists(userModel.UserName, entity.Id))
                     {
                         entity.UserName = userModel.UserName;
                         entity.Email = userModel.Email;
@@ -283,7 +283,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
-                    if (!UserExists(userModel.UserName))
+                    if (!UserExists(userModel.UserName, entity.Id))
                     {
                         entity.UserName = userModel.UserName;
                         entity.Email = userModel.Email;
@@ -690,7 +690,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(roleModel.Id);
                 if (entity != null)
                 {
-                    if (!RoleExists(roleModel.Name))
+                    if (!RoleExists(roleModel.Name, entity.Id))
                     {
                         entity.Name = roleModel.Name;
                         entity.Description = roleModel.Description;
@@ -716,7 +716,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    if (!RoleExists(roleModel.Name))
+                    if (!RoleExists(roleModel.Name, entity.Id))
                     {
                         entity.Name = roleModel.Name;
                         entity.Description = roleModel.Description;
@@ -742,7 +742,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _roleDal.GetEntity(e => e.Name == name);
                 if (entity != null)
                 {
-                    if (!RoleExists(roleModel.Name))
+                    if (!RoleExists(roleModel.Name, entity.Id))
                     {
                         entity.Name = roleModel.Name;
                         entity.Description = roleModel.Description;
@@ -846,16 +846,16 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<IdentityClaimModel> GetClaimByType(string type)
+        public Result<List<IdentityClaimModel>> GetClaimsByType(string type)
         {
             try
             {
-                var claim = _claimDal.GetEntity(e => e.Type == type, "IdentityUserClaims");
-                return GetClaimModel(claim);
+                var claims = _claimDal.GetEntities(e => e.Type == type, "IdentityUserClaims");
+                return GetClaimsModel(claims);
             }
             catch (Exception exc)
             {
-                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
             }
         }
 
@@ -876,7 +876,7 @@ namespace AppCore.Business.Concretes.Services.Identity
         {
             try
             {
-                if (!ClaimExists(claimModel.Type))
+                if (!ClaimExists(claimModel.Type, claimModel.Value))
                 {
                     var entity = new IdentityClaim()
                     {
@@ -903,7 +903,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _claimDal.GetEntity(claimModel.Id);
                 if (entity != null)
                 {
-                    if (!ClaimExists(claimModel.Type))
+                    if (!ClaimExists(claimModel.Type, claimModel.Value, entity.Id))
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
@@ -929,33 +929,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _claimDal.GetEntity(guid);
                 if (entity != null)
                 {
-                    if (!ClaimExists(claimModel.Type))
-                    {
-                        entity.Type = claimModel.Type;
-                        entity.Value = claimModel.Value;
-                        _claimDal.UpdateEntity(entity);
-                        UpdateClaimModelIds(claimModel, entity);
-                        UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
-                        return new SuccessResult<IdentityClaimModel>(claimModel);
-                    }
-                    return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimFoundMessage);
-                }
-                return new ErrorResult<IdentityClaimModel>(IdentityServiceConfig.ClaimNotFoundMessage);
-            }
-            catch (Exception exc)
-            {
-                return new ExceptionResult<IdentityClaimModel>(exc, ShowException);
-            }
-        }
-
-        public Result<IdentityClaimModel> UpdateClaimByType(IdentityClaimModel claimModel, string type)
-        {
-            try
-            {
-                var entity = _claimDal.GetEntity(e => e.Type == type);
-                if (entity != null)
-                {
-                    if (!ClaimExists(claimModel.Type))
+                    if (!ClaimExists(claimModel.Type, claimModel.Value, entity.Id))
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
@@ -1012,18 +986,23 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result DeleteClaimByType(string type)
+        public Result DeleteClaimsByType(string type)
         {
             try
             {
-                var entity = _claimDal.GetEntity(e => e.Type == type);
-                if (entity != null)
+                var entities = _claimDal.GetEntities(e => e.Type == type);
+                if (entities != null && entities.Count > 0)
                 {
-                    DeleteUserClaimsByClaim(entity.Id);
-                    _claimDal.DeleteEntity(entity);
+                    _claimDal.Commit = false;
+                    foreach (var entity in entities)
+                    {
+                        DeleteUserClaimsByClaim(entity.Id);
+                        _claimDal.DeleteEntity(entity);
+                    }
+                    _claimDal.SaveChanges();
                     return new SuccessResult();
                 }
-                return new ErrorResult(IdentityServiceConfig.ClaimNotFoundMessage);
+                return new ErrorResult(IdentityServiceConfig.ClaimsNotFoundMessage);
             }
             catch (Exception exc)
             {
@@ -1101,13 +1080,9 @@ namespace AppCore.Business.Concretes.Services.Identity
             return new SuccessResult<List<IdentityUserModel>>(model);
         }
 
-        private bool UserExists(string userName, bool onlyActive = false)
+        private bool UserExists(string userName, int id = 0)
         {
-            if (onlyActive)
-            {
-                return _userDal.EntityExists(e => e.UserName == userName && e.Active == true);
-            }
-            return _userDal.EntityExists(e => e.UserName == userName);
+            return _userDal.EntityExists(e => e.Id != id && e.UserName == userName);
         }
 
         private void UpdateUserModelIds(IdentityUserModel model, IdentityUser entity)
@@ -1161,9 +1136,9 @@ namespace AppCore.Business.Concretes.Services.Identity
             return new SuccessResult<List<IdentityRoleModel>>(model);
         }
 
-        private bool RoleExists(string name)
+        private bool RoleExists(string name, int id = 0)
         {
-            return _roleDal.EntityExists(e => e.Name == name);
+            return _roleDal.EntityExists(e => e.Id != id && e.Name == name);
         }
 
         private void UpdateRoleModelIds(IdentityRoleModel model, IdentityRole entity)
@@ -1217,9 +1192,9 @@ namespace AppCore.Business.Concretes.Services.Identity
             return new SuccessResult<List<IdentityClaimModel>>(model);
         }
 
-        private bool ClaimExists(string type)
+        private bool ClaimExists(string type, string value, int id = 0)
         {
-            return _claimDal.EntityExists(e => e.Type == type);
+            return _claimDal.EntityExists(e => e.Id != id && e.Type == type && e.Value == value);
         }
 
         private void UpdateClaimModelIds(IdentityClaimModel model, IdentityClaim entity)
