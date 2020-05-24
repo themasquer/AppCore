@@ -3,7 +3,7 @@ using AppCore.Entities.Abstracts.Identity;
 
 namespace AppCore.Entities.Concretes.Identity
 {
-    public sealed class IdentityUser : IdentityUserBase
+    public class IdentityUser : IdentityUserBase
     {
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }

@@ -2,7 +2,7 @@
 
 namespace AppCore.Entities.Concretes.Identity
 {
-    public sealed class IdentityUserClaim : IdentityUserClaimBase
+    public class IdentityUserClaim : IdentityUserClaimBase
     {
         public IdentityUser IdentityUser { get; set; }
         public IdentityClaim IdentityClaim { get; set; }

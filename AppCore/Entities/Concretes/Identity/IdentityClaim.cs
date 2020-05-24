@@ -3,7 +3,7 @@ using AppCore.Entities.Abstracts.Identity;
 
 namespace AppCore.Entities.Concretes.Identity
 {
-    public sealed class IdentityClaim : IdentityClaimBase
+    public class IdentityClaim : IdentityClaimBase
     {
         public List<IdentityUserClaim> IdentityUserClaims { get; set; }
     }

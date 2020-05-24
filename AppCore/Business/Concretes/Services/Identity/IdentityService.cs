@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 
 namespace AppCore.Business.Concretes.Services.Identity
 {
-    public sealed class IdentityService : IIdentityService
+    public class IdentityService : IIdentityService
     {
         private readonly IdentityUserDalBase _userDal;
         private readonly IdentityUserClaimDalBase _userClaimDal;

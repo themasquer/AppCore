@@ -2,7 +2,7 @@
 
 namespace AppCore.Business.Concretes.Helpers.Security.Identity
 {
-    public sealed class SecurityKeyHelper : SecurityKeyHelperBase
+    public class SecurityKeyHelper : SecurityKeyHelperBase
     {
         
     }

@@ -2,7 +2,7 @@
 
 namespace AppCore.Business.Concretes.Helpers.Security.Hash
 {
-    public sealed class CryptoHelper : CryptoHelperBase
+    public class CryptoHelper : CryptoHelperBase
     {
         
     }
