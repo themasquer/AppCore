@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AppCore.MvcWebUI.Extensions
 {
-    public static class SessionExtension
+    public static class SessionExtensions
     {
         public static void SetObject<T>(this ISession session, string key, T value) where T : class 
         {

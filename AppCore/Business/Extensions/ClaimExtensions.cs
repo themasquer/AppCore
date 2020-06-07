@@ -5,7 +5,7 @@ using System.Security.Claims;
 
 namespace AppCore.Business.Extensions
 {
-    public static class ClaimExtension
+    public static class ClaimExtensions
     {
         public static void AddUserName(this IList<Claim> claims, string userName)
         {
