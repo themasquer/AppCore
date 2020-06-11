@@ -11,9 +11,9 @@
         public string DetailsTitle { get; set; } = "Details";
         public string EditTitle { get; set; } = "Edit";
         public string DeleteTitle { get; set; } = "Delete";
-        public string DetailsCss { get; set; } = "operationlinks";
-        public string EditCss { get; set; } = "operationlinks";
-        public string DeleteCss { get; set; } = "operationlinks";
+        public string DetailsCss { get; set; } = "operationlink";
+        public string EditCss { get; set; } = "operationlink";
+        public string DeleteCss { get; set; } = "operationlink";
         public string OperationLinksProperty { get; set; } = "OperationLinks";
         public string OperationKeyProperty { get; set; } = "Id";
     }
