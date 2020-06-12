@@ -207,7 +207,7 @@ namespace AppCore.Business.Abstracts.Utils.File
             }
         }
 
-        public virtual Result<FileDownload> DownloadFileByEntityId(int entityId,
+        public virtual Result<FileDownload> GetFileToDownloadByEntityId(int entityId,
             bool useOctetStreamContentType = false, params string[] hierarchicalDirectories)
         {
             try
@@ -230,7 +230,7 @@ namespace AppCore.Business.Abstracts.Utils.File
             }
         }
 
-        public virtual Result<FileDownload> DownloadFileByEntityId(int entityId, string downloadFileNameWithoutExtension,
+        public virtual Result<FileDownload> GetFileToDownloadByEntityId(int entityId, string downloadFileNameWithoutExtension,
             bool useOctetStreamContentType = false, params string[] hierarchicalDirectories)
         {
             try
@@ -254,7 +254,7 @@ namespace AppCore.Business.Abstracts.Utils.File
             }
         }
 
-        public virtual Result<FileDownload> DownloadFile(string fileName,
+        public virtual Result<FileDownload> GetFileToDownload(string fileName,
             bool useOctetStreamContentType = false, params string[] hierarchicalDirectories)
         {
             try
@@ -276,7 +276,7 @@ namespace AppCore.Business.Abstracts.Utils.File
             }
         }
 
-        public virtual Result<FileDownload> DownloadFile(string fileName, string downloadFileNameWithoutExtension,
+        public virtual Result<FileDownload> GetFileToDownload(string fileName, string downloadFileNameWithoutExtension,
             bool useOctetStreamContentType = false, params string[] hierarchicalDirectories)
         {
             try
