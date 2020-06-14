@@ -1,6 +1,6 @@
 ﻿// Reference: https://github.com/DavidSuescunPelegay/jQuery-datatable-server-side-net-core
 
-function BindDataTable(tableIdWithoutSharp, url, columns, columnDefs, languageJson = "", clearSearchLinkIdWithoutSharp = "clearsearch") {
+function BindDataTable(tableIdWithoutSharp, url, columns, columnDefs, languageJson = "", clearSearchLinkIdWithoutSharp = "") {
     $(document).ready(function () {
         $("#" + tableIdWithoutSharp).DataTable({
             language: {
@@ -33,11 +33,13 @@ function BindDataTable(tableIdWithoutSharp, url, columns, columnDefs, languageJs
             // Column Definitions
             columnDefs: columnDefs
         });
-        $("#" + clearSearchLinkIdWithoutSharp).click(function (event) {
-            event.preventDefault();
-            $("#" + tableIdWithoutSharp).DataTable()
-                .search('')
-                .draw();
-        });
+        if (clearSearchLinkIdWithoutSharp !== "") {
+            $("#" + clearSearchLinkIdWithoutSharp).click(function(event) {
+                event.preventDefault();
+                $("#" + tableIdWithoutSharp).DataTable()
+                    .search('')
+                    .draw();
+            });
+        }
     });
 }
