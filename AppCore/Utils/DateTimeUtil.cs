@@ -7,6 +7,8 @@ namespace AppCore.Utils
     {
         public static DateTime? GetDateFromStringWithTRformat(string date)
         {
+            if (date == null)
+                return null;
             date = date.Trim();
             if (date.Equals(""))
                 return null;
@@ -27,6 +29,8 @@ namespace AppCore.Utils
 
         public static DateTime? GetDateFromStringWithTRformat(string date, string time)
         {
+            if (date == null || time == null)
+                return null;
             date = date.Trim();
             time = time.Trim();
             if (date.Equals(""))
@@ -68,6 +72,8 @@ namespace AppCore.Utils
 
         public static DateTime? GetDateFromStringWithENformat(string date)
         {
+            if (date == null)
+                return null;
             date = date.Trim();
             if (date.Equals(""))
                 return null;
@@ -88,6 +94,8 @@ namespace AppCore.Utils
 
         public static DateTime? GetDateFromStringWithENformat(string date, string time)
         {
+            if (date == null || time == null)
+                return null;
             date = date.Trim();
             time = time.Trim();
             if (date.Equals(""))
@@ -129,6 +137,8 @@ namespace AppCore.Utils
 
         public static DateTime? GetDateFromStringWithSQLformat(string date)
         {
+            if (date == null)
+                return null;
             date = date.Trim();
             if (date.Equals(""))
                 return null;
@@ -149,6 +159,8 @@ namespace AppCore.Utils
 
         public static DateTime? GetDateFromStringWithSQLformat(string date, string time)
         {
+            if (date == null || time == null)
+                return null;
             date = date.Trim();
             time = time.Trim();
             if (date.Equals(""))
@@ -210,6 +222,8 @@ namespace AppCore.Utils
         public static DateTime? GetDateFromStringWithYYmmDDFormat(string date, string yearPrefix = "20")
         {
             if (String.IsNullOrWhiteSpace(date))
+                return null;
+            if (date.Length != 6)
                 return null;
             string year = date.Substring(0, 2);
             string month = date.Substring(2, 2);
