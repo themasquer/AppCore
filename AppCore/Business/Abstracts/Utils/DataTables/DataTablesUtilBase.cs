@@ -3,6 +3,7 @@ using AppCore.Business.Concretes.Models.Results;
 using AppCore.Business.Configs;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,9 +15,9 @@ namespace AppCore.Business.Abstracts.Utils.DataTables
 
     public abstract class DataTablesUtilBase
     {
-        public virtual async Task<Result<DtResult<T>>> BindDataTable<T>(DtParameters dtParameters, IQueryable<T> query, 
+        public virtual async Task<Result<DtResult<T>>> BindDataTable<T>(DtParameters dtParameters, IQueryable<T> query,
             Expression<Func<T, bool>> predicate = null, string orderExpressionValueSuffix = "Value")
-       where T : class, new()
+        where T : class, new()
         {
             try
             {
@@ -41,6 +42,42 @@ namespace AppCore.Business.Abstracts.Utils.DataTables
                     RecordsTotal = recordsCount,
                     RecordsFiltered = filteredRecordsCount,
                     Data = await filteredQuery.Skip(dtParameters.Start).Take(dtParameters.Length).ToListAsync()
+                };
+                return new SuccessResult<DtResult<T>>(dataTable);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<DtResult<T>>(exc);
+            }
+        }
+
+        public virtual Result<DtResult<T>> BindDataTable<T>(DtParameters dtParameters, List<T> list,
+            Expression<Func<T, bool>> predicate = null, string orderExpressionValueSuffix = "Value")
+        where T : class, new()
+        {
+            try
+            {
+                string orderExpression = null;
+                bool orderDirectionAscending = true;
+                if (dtParameters.Order != null)
+                {
+                    orderExpression = dtParameters.Columns[dtParameters.Order[0].Column].Data;
+                    orderDirectionAscending = dtParameters.Order[0].Dir == DtOrderDir.Asc;
+                }
+                int recordsCount = list.Count;
+                IQueryable<T> orderedQuery = OrderQuery(list.AsQueryable(), orderDirectionAscending, orderExpression, orderExpressionValueSuffix);
+                IQueryable<T> filteredQuery;
+                if (predicate == null)
+                    filteredQuery = orderedQuery;
+                else
+                    filteredQuery = orderedQuery.Where(predicate);
+                int filteredRecordsCount = filteredQuery.Count();
+                var dataTable = new DtResult<T>()
+                {
+                    Draw = dtParameters.Draw,
+                    RecordsTotal = recordsCount,
+                    RecordsFiltered = filteredRecordsCount,
+                    Data = filteredQuery.Skip(dtParameters.Start).Take(dtParameters.Length).ToList()
                 };
                 return new SuccessResult<DtResult<T>>(dataTable);
             }
