@@ -57,7 +57,7 @@ namespace AppCore.Utils
         {
             string day = dateTime.Day.ToString().PadLeft(2, '0');
             string month = dateTime.Month.ToString().PadLeft(2, '0');
-            string year = dateTime.Year.ToString();
+            string year = dateTime.Year.ToString().PadLeft(4, '0');
             string hour = dateTime.Hour.ToString().PadLeft(2, '0');
             string minute = dateTime.Minute.ToString().PadLeft(2, '0');
             string second = dateTime.Second.ToString().PadLeft(2, '0');
@@ -118,7 +118,7 @@ namespace AppCore.Utils
         {
             string day = dateTime.Day.ToString().PadLeft(2, '0');
             string month = dateTime.Month.ToString().PadLeft(2, '0');
-            string year = dateTime.Year.ToString();
+            string year = dateTime.Year.ToString().PadLeft(4, '0');
             string hour = dateTime.Hour.ToString().PadLeft(2, '0');
             string minute = dateTime.Minute.ToString().PadLeft(2, '0');
             string second = dateTime.Second.ToString().PadLeft(2, '0');
@@ -179,7 +179,7 @@ namespace AppCore.Utils
         {
             string day = dateTime.Day.ToString().PadLeft(2, '0');
             string month = dateTime.Month.ToString().PadLeft(2, '0');
-            string year = dateTime.Year.ToString();
+            string year = dateTime.Year.ToString().PadLeft(4, '0');
             string hour = dateTime.Hour.ToString().PadLeft(2, '0');
             string minute = dateTime.Minute.ToString().PadLeft(2, '0');
             string second = dateTime.Second.ToString().PadLeft(2, '0');
@@ -192,7 +192,7 @@ namespace AppCore.Utils
         {
             string day = dateTime.Day.ToString().PadLeft(2, '0');
             string month = dateTime.Month.ToString().PadLeft(2, '0');
-            string year = dateTime.Year.ToString();
+            string year = dateTime.Year.ToString().PadLeft(4, '0');
             string hour = dateTime.Hour.ToString().PadLeft(2, '0');
             string minute = dateTime.Minute.ToString().PadLeft(2, '0');
             string second = dateTime.Second.ToString().PadLeft(2, '0');
@@ -205,6 +205,32 @@ namespace AppCore.Utils
             date = date.AddMinutes(minutes);
             date = date.AddSeconds(seconds);
             return date;
+        }
+
+        public static DateTime? GetDateFromStringWithYYmmDDFormat(string date, string yearPrefix = "20")
+        {
+            if (String.IsNullOrWhiteSpace(date))
+                return null;
+            string year = date.Substring(0, 2);
+            string month = date.Substring(2, 2);
+            string day = date.Substring(4, 2);
+            try
+            {
+                DateTime result = new DateTime(Convert.ToInt32(yearPrefix + year), Convert.ToInt32(month), Convert.ToInt32(day));
+                return result;
+            }
+            catch (Exception exc)
+            {
+                return null;
+            }
+        }
+
+        public static string GetStringWithYYmmDDFormatFromDate(DateTime dateTime)
+        {
+            string day = dateTime.Day.ToString().PadLeft(2, '0');
+            string month = dateTime.Month.ToString().PadLeft(2, '0');
+            string year = dateTime.Year.ToString().Substring(2, 2);
+            return year + month + day;
         }
     }
 }
