@@ -473,8 +473,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             try
             {
                 entity.Guid = Guid.NewGuid().ToString();
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Added;
+                _context.Set<TEntity>().Add(entity);
                 if (Commit)
                     SaveChanges();
             }
@@ -489,8 +488,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             try
             {
                 entity.Guid = Guid.NewGuid().ToString();
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Added;
+                _context.Set<TEntity>().Add(entity);
                 if (Commit)
                     await SaveChangesAsync();
             }
@@ -504,8 +502,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Modified;
+                _context.Set<TEntity>().Update(entity);
                 if (Commit)
                     SaveChanges();
             }
@@ -519,8 +516,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Modified;
+                _context.Set<TEntity>().Update(entity);
                 if (Commit)
                     await SaveChangesAsync();
             }
@@ -586,8 +582,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Deleted;
+                _context.Set<TEntity>().Remove(entity);
                 if (Commit)
                     SaveChanges();
             }
@@ -601,8 +596,7 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
         {
             try
             {
-                var contextEntity = _context.Entry(entity);
-                contextEntity.State = EntityState.Deleted;
+                _context.Set<TEntity>().Remove(entity);
                 if (Commit)
                     await SaveChangesAsync();
             }
