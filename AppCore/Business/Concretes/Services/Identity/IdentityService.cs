@@ -941,11 +941,73 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaims(int id)
+        public Result<List<IdentityClaimModel>> GetClaims(int nonRelatedClaimId)
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.Id == id || e.RelatedClaimId == id, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.Id == nonRelatedClaimId || e.RelatedClaimId == nonRelatedClaimId, "IdentityUserClaims");
+                return GetClaimsModel(claims);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
+            }
+        }
+
+        public Result<List<IdentityClaimModel>> GetClaimsByGuid(string nonRelatedClaimGuid)
+        {
+            try
+            {
+                List<IdentityClaim> claims = null;
+                List<IdentityClaim> relatedClaims;
+                List<IdentityClaim> nonRelatedClaims = _claimDal.GetEntities(e => e.Guid == nonRelatedClaimGuid && e.RelatedClaimId == null, "IdentityUserClaims");
+                if (nonRelatedClaims != null && nonRelatedClaims.Count > 0)
+                {
+                    claims = nonRelatedClaims.ToList();
+                    foreach (var nonRelatedClaim in nonRelatedClaims)
+                    {
+                        relatedClaims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaim.Id, "IdentityUserClaims");
+                        if (relatedClaims != null && relatedClaims.Count > 0)
+                        {
+                            foreach (var relatedClaim in relatedClaims)
+                            {
+                                claims.Add(relatedClaim);
+                            }
+                        }
+                    }
+                    claims = claims.OrderBy(e => e.RelatedClaimId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
+                }
+                return GetClaimsModel(claims);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
+            }
+        }
+
+        public Result<List<IdentityClaimModel>> GetClaimsByType(string nonRelatedClaimType)
+        {
+            try
+            {
+                List<IdentityClaim> claims = null;
+                List<IdentityClaim> relatedClaims;
+                List<IdentityClaim> nonRelatedClaims = _claimDal.GetEntities(e => e.Type == nonRelatedClaimType && e.RelatedClaimId == null, "IdentityUserClaims");
+                if (nonRelatedClaims != null && nonRelatedClaims.Count > 0)
+                {
+                    claims = nonRelatedClaims.ToList();
+                    foreach (var nonRelatedClaim in nonRelatedClaims)
+                    {
+                        relatedClaims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaim.Id, "IdentityUserClaims");
+                        if (relatedClaims != null && relatedClaims.Count > 0)
+                        {
+                            foreach (var relatedClaim in relatedClaims)
+                            {
+                                claims.Add(relatedClaim);
+                            }
+                        }
+                    }
+                    claims = claims.OrderBy(e => e.RelatedClaimId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
+                }
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -967,11 +1029,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetNonRelatedClaimsByType(string type)
+        public Result<List<IdentityClaimModel>> GetNonRelatedClaimsByType(string nonRelatedClaimType)
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.Type == type && e.RelatedClaimId == null, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.Type == nonRelatedClaimType && e.RelatedClaimId == null, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -980,11 +1042,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetRelatedClaims(int id)
+        public Result<List<IdentityClaimModel>> GetRelatedClaims(int nonRelatedClaimId)
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == id, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaimId, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
