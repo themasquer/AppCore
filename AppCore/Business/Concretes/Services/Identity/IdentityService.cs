@@ -587,6 +587,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(id);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -607,6 +609,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(id);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -627,6 +631,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -647,6 +653,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(guid);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -667,6 +675,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = IdentityServiceConfig.OperationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -687,6 +697,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 var entity = _userDal.GetEntity(e => e.UserName == userName);
                 if (entity != null)
                 {
+                    DeleteUserRolesByUser(entity.Id);
+                    DeleteUserClaimsByUser(entity.Id);
                     entity.UpdatedBy = operationBy;
                     entity.UpdateDate = DateTime.Now;
                     _userDal.DeleteEntity(entity);
@@ -941,11 +953,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaimsByType(string type)
+        public Result<List<IdentityClaimModel>> GetNonRelatedClaims()
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.Type == type, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == null, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -954,11 +966,24 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaims()
+        public Result<List<IdentityClaimModel>> GetNonRelatedClaimsByType(string type)
         {
             try
             {
-                var claims = _claimDal.GetEntities("IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.Type == type && e.RelatedClaimId == null, "IdentityUserClaims");
+                return GetClaimsModel(claims);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
+            }
+        }
+
+        public Result<List<IdentityClaimModel>> GetRelatedClaims(int id)
+        {
+            try
+            {
+                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == id, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)

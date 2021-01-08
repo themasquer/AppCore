@@ -52,8 +52,9 @@ namespace AppCore.Business.Abstracts.Services.Identity
         Result DeleteRoleByName(string name);
         Result<IdentityClaimModel> GetClaim(int id);
         Result<IdentityClaimModel> GetClaimByGuid(string guid);
-        Result<List<IdentityClaimModel>> GetClaimsByType(string type);
-        Result<List<IdentityClaimModel>> GetClaims();
+        Result<List<IdentityClaimModel>> GetNonRelatedClaims();
+        Result<List<IdentityClaimModel>> GetNonRelatedClaimsByType(string type);
+        Result<List<IdentityClaimModel>> GetRelatedClaims(int id);
         Result<IdentityClaimModel> AddClaim(IdentityClaimModel claimModel);
         Result<IdentityClaimModel> UpdateClaim(IdentityClaimModel claimModel);
         Result<IdentityClaimModel> UpdateClaimByGuid(IdentityClaimModel claimModel, string guid);

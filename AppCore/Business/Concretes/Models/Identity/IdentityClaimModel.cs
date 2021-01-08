@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using AppCore.Entities.Abstracts.Identity;
-using AppCore.Entities.Concretes.Identity;
+﻿using AppCore.Entities.Abstracts.Identity;
+using System.Collections.Generic;
 
 namespace AppCore.Business.Concretes.Models.Identity
 {
