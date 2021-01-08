@@ -976,7 +976,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                     var entity = new IdentityClaim()
                     {
                         Type = claimModel.Type,
-                        Value = claimModel.Value
+                        Value = claimModel.Value,
+                        RelatedClaimId = claimModel.RelatedClaimId
                     };
                     _claimDal.AddEntity(entity);
                     UpdateClaimModelIds(claimModel, entity);
@@ -1002,6 +1003,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
+                        entity.RelatedClaimId = claimModel.RelatedClaimId;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
                         UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
@@ -1028,6 +1030,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
+                        entity.RelatedClaimId = claimModel.RelatedClaimId;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
                         UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
@@ -1187,7 +1190,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Id = claim.Id,
                 Guid = claim.Guid,
                 Type = claim.Type,
-                Value = claim.Value
+                Value = claim.Value,
+                RelatedClaimId = claim.RelatedClaimId
             };
             var usersResult = GetUsersByClaim(model.Id);
             model.IdentityUsers = usersResult.Data;
@@ -1205,7 +1209,8 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Id = e.Id,
                 Guid = e.Guid,
                 Type = e.Type,
-                Value = e.Value
+                Value = e.Value,
+                RelatedClaimId = e.RelatedClaimId
             }).ToList();
             if (includeUsers)
             {

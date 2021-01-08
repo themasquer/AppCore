@@ -26,46 +26,18 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             Commit = true;
         }
 
-        public virtual IQueryable<TEntity> GetEntityQuery()
-        {
-            try
-            {
-                if (_isDeletedEntityProperty != null)
-                {
-                    return _context.Set<TEntity>().Where(e => EF.Property<bool?>(e, _isDeletedEntityProperty) == null || EF.Property<bool?>(e, _isDeletedEntityProperty) == false).AsQueryable();
-                }
-                return _context.Set<TEntity>().AsQueryable();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual IQueryable<TEntity> GetSoftDeletedEntityQuery()
-        {
-            try
-            {
-                if (_isDeletedEntityProperty != null)
-                {
-                    return _context.Set<TEntity>().Where(e => EF.Property<bool?>(e, _isDeletedEntityProperty) == true).AsQueryable();
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         public virtual IQueryable<TEntity> GetEntityQuery(params string[] entitiesToInclude)
         {
             try
             {
-                var queryEntity = GetEntityQuery();
+                IQueryable<TEntity> queryEntity = _context.Set<TEntity>().AsQueryable();
                 foreach (string entityToInclude in entitiesToInclude)
                 {
                     queryEntity = queryEntity.Include(entityToInclude);
+                }
+                if (_isDeletedEntityProperty != null)
+                {
+                    queryEntity = queryEntity.Where(e => EF.Property<bool?>(e, _isDeletedEntityProperty) == null || EF.Property<bool?>(e, _isDeletedEntityProperty) == false).AsQueryable();
                 }
                 return queryEntity;
             }
@@ -75,11 +47,41 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual IQueryable<TEntity> GetEntityQuery(Expression<Func<TEntity, bool>> predicate)
+        public virtual IQueryable<TEntity> GetEntityQueryIncludingSoftDeleted(params string[] entitiesToInclude)
         {
             try
             {
-                return GetEntityQuery().Where(predicate);
+                IQueryable<TEntity> queryEntity = _context.Set<TEntity>().AsQueryable();
+                foreach (string entityToInclude in entitiesToInclude)
+                {
+                    queryEntity = queryEntity.Include(entityToInclude);
+                }
+                if (_isDeletedEntityProperty != null)
+                {
+                    return queryEntity;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public virtual IQueryable<TEntity> GetSoftDeletedEntityQuery(params string[] entitiesToInclude)
+        {
+            try
+            {
+                IQueryable<TEntity> queryEntity = _context.Set<TEntity>().AsQueryable();
+                foreach (string entityToInclude in entitiesToInclude)
+                {
+                    queryEntity = queryEntity.Include(entityToInclude);
+                }
+                if (_isDeletedEntityProperty != null)
+                {
+                    return queryEntity.Where(e => EF.Property<bool?>(e, _isDeletedEntityProperty) == true).AsQueryable();
+                }
+                return null;
             }
             catch (Exception e)
             {
@@ -93,30 +95,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             {
                 var queryEntity = GetEntityQuery(entitiesToInclude);
                 return queryEntity.Where(predicate);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual List<TEntity> GetEntities()
-        {
-            try
-            {
-                return GetEntityQuery().ToList();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual async Task<List<TEntity>> GetEntitiesAsync()
-        {
-            try
-            {
-                return await GetEntityQuery().ToListAsync();
             }
             catch (Exception e)
             {
@@ -150,30 +128,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             }
         }
 
-        public virtual List<TEntity> GetEntities(Expression<Func<TEntity, bool>> predicate)
-        {
-            try
-            {
-                return GetEntityQuery(predicate).ToList();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual async Task<List<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>> predicate)
-        {
-            try
-            {
-                return await GetEntityQuery(predicate).ToListAsync();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         public virtual List<TEntity> GetEntities(Expression<Func<TEntity, bool>> predicate, params string[] entitiesToInclude)
         {
             try
@@ -193,54 +147,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             {
                 var queryEntity = GetEntityQuery(entitiesToInclude);
                 return await queryEntity.Where(predicate).ToListAsync();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual TEntity GetEntity(int id)
-        {
-            try
-            {
-                return GetEntityQuery().SingleOrDefault(e => e.Id == id);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual async Task<TEntity> GetEntityAsync(int id)
-        {
-            try
-            {
-                return await GetEntityQuery().SingleOrDefaultAsync(e => e.Id == id);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual TEntity GetEntity(string guid)
-        {
-            try
-            {
-                return GetEntityQuery().SingleOrDefault(e => e.Guid == guid);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual async Task<TEntity> GetEntityAsync(string guid)
-        {
-            try
-            {
-                return await GetEntityQuery().SingleOrDefaultAsync(e => e.Guid == guid);
             }
             catch (Exception e)
             {
@@ -289,30 +195,6 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             try
             {
                 return await GetEntityQuery(entitiesToInclude).SingleOrDefaultAsync(e => e.Guid == guid);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual TEntity GetEntity(Expression<Func<TEntity, bool>> predicate)
-        {
-            try
-            {
-                return GetEntityQuery().SingleOrDefault(predicate);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public virtual async Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> predicate)
-        {
-            try
-            {
-                return await GetEntityQuery().SingleOrDefaultAsync(predicate);
             }
             catch (Exception e)
             {
@@ -669,10 +551,10 @@ namespace AppCore.DataAccess.Abstracts.EntityFramework
             try
             {
                 int deletedCount = 0;
-                var query = GetSoftDeletedEntityQuery();
-                if (query != null)
+                var queryEntity = GetSoftDeletedEntityQuery();
+                if (queryEntity != null)
                 {
-                    var entities = query.ToList();
+                    var entities = queryEntity.ToList();
                     Commit = false;
                     foreach (var entity in entities)
                     {

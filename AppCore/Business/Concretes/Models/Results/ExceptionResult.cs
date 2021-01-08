@@ -17,6 +17,11 @@ namespace AppCore.Business.Concretes.Models.Results
         {
 
         }
+
+        public ExceptionResult() : base(ResultStatus.Exception,"Exception")
+        {
+
+        }
     }
 
     public class ExceptionResult<TResultType> : Result<TResultType>
@@ -31,6 +36,11 @@ namespace AppCore.Business.Concretes.Models.Results
                     : "")
                 : "Exception",
             default)
+        {
+
+        }
+
+        public ExceptionResult() : base(ResultStatus.Exception, "Exception", default)
         {
 
         }
