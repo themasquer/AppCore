@@ -941,11 +941,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaims(int nonRelatedClaimId)
+        public Result<List<IdentityClaimModel>> GetParentClaims()
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.Id == nonRelatedClaimId || e.RelatedClaimId == nonRelatedClaimId, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.ParentId == null, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -954,28 +954,41 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaimsByGuid(string nonRelatedClaimGuid)
+        public Result<List<IdentityClaimModel>> GetParentAndChildClaims(int parentId)
+        {
+            try
+            {
+                var claims = _claimDal.GetEntities(e => e.Id == parentId || e.ParentId == parentId, "IdentityUserClaims");
+                return GetClaimsModel(claims);
+            }
+            catch (Exception exc)
+            {
+                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
+            }
+        }
+
+        public Result<List<IdentityClaimModel>> GetParentAndChildClaimsByGuid(string parentGuid)
         {
             try
             {
                 List<IdentityClaim> claims = null;
-                List<IdentityClaim> relatedClaims;
-                List<IdentityClaim> nonRelatedClaims = _claimDal.GetEntities(e => e.Guid == nonRelatedClaimGuid && e.RelatedClaimId == null, "IdentityUserClaims");
-                if (nonRelatedClaims != null && nonRelatedClaims.Count > 0)
+                List<IdentityClaim> childClaims;
+                List<IdentityClaim> parentClaims = _claimDal.GetEntities(e => e.Guid == parentGuid && e.ParentId == null, "IdentityUserClaims");
+                if (parentClaims != null && parentClaims.Count > 0)
                 {
-                    claims = nonRelatedClaims.ToList();
-                    foreach (var nonRelatedClaim in nonRelatedClaims)
+                    claims = parentClaims.ToList();
+                    foreach (var parentClaim in parentClaims)
                     {
-                        relatedClaims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaim.Id, "IdentityUserClaims");
-                        if (relatedClaims != null && relatedClaims.Count > 0)
+                        childClaims = _claimDal.GetEntities(e => e.ParentId == parentClaim.Id, "IdentityUserClaims");
+                        if (childClaims != null && childClaims.Count > 0)
                         {
-                            foreach (var relatedClaim in relatedClaims)
+                            foreach (var childClaim in childClaims)
                             {
-                                claims.Add(relatedClaim);
+                                claims.Add(childClaim);
                             }
                         }
                     }
-                    claims = claims.OrderBy(e => e.RelatedClaimId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
+                    claims = claims.OrderBy(e => e.ParentId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
                 }
                 return GetClaimsModel(claims);
             }
@@ -985,28 +998,28 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetClaimsByType(string nonRelatedClaimType)
+        public Result<List<IdentityClaimModel>> GetParentAndChildClaimsByType(string parentType)
         {
             try
             {
                 List<IdentityClaim> claims = null;
-                List<IdentityClaim> relatedClaims;
-                List<IdentityClaim> nonRelatedClaims = _claimDal.GetEntities(e => e.Type == nonRelatedClaimType && e.RelatedClaimId == null, "IdentityUserClaims");
-                if (nonRelatedClaims != null && nonRelatedClaims.Count > 0)
+                List<IdentityClaim> childClaims;
+                List<IdentityClaim> parentClaims = _claimDal.GetEntities(e => e.Type == parentType && e.ParentId == null, "IdentityUserClaims");
+                if (parentClaims != null && parentClaims.Count > 0)
                 {
-                    claims = nonRelatedClaims.ToList();
-                    foreach (var nonRelatedClaim in nonRelatedClaims)
+                    claims = parentClaims.ToList();
+                    foreach (var parentClaim in parentClaims)
                     {
-                        relatedClaims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaim.Id, "IdentityUserClaims");
-                        if (relatedClaims != null && relatedClaims.Count > 0)
+                        childClaims = _claimDal.GetEntities(e => e.ParentId == parentClaim.Id, "IdentityUserClaims");
+                        if (childClaims != null && childClaims.Count > 0)
                         {
-                            foreach (var relatedClaim in relatedClaims)
+                            foreach (var childClaim in childClaims)
                             {
-                                claims.Add(relatedClaim);
+                                claims.Add(childClaim);
                             }
                         }
                     }
-                    claims = claims.OrderBy(e => e.RelatedClaimId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
+                    claims = claims.OrderBy(e => e.ParentId).ThenBy(e => e.Type).ThenBy(e => e.Value).ToList();
                 }
                 return GetClaimsModel(claims);
             }
@@ -1016,11 +1029,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetNonRelatedClaims()
+        public Result<List<IdentityClaimModel>> GetParentClaimsByType(string parentType)
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == null, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.Type == parentType && e.ParentId == null, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -1029,24 +1042,11 @@ namespace AppCore.Business.Concretes.Services.Identity
             }
         }
 
-        public Result<List<IdentityClaimModel>> GetNonRelatedClaimsByType(string nonRelatedClaimType)
+        public Result<List<IdentityClaimModel>> GetChildClaims(int parentId)
         {
             try
             {
-                var claims = _claimDal.GetEntities(e => e.Type == nonRelatedClaimType && e.RelatedClaimId == null, "IdentityUserClaims");
-                return GetClaimsModel(claims);
-            }
-            catch (Exception exc)
-            {
-                return new ExceptionResult<List<IdentityClaimModel>>(exc, ShowException);
-            }
-        }
-
-        public Result<List<IdentityClaimModel>> GetRelatedClaims(int nonRelatedClaimId)
-        {
-            try
-            {
-                var claims = _claimDal.GetEntities(e => e.RelatedClaimId == nonRelatedClaimId, "IdentityUserClaims");
+                var claims = _claimDal.GetEntities(e => e.ParentId == parentId, "IdentityUserClaims");
                 return GetClaimsModel(claims);
             }
             catch (Exception exc)
@@ -1065,7 +1065,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     {
                         Type = claimModel.Type,
                         Value = claimModel.Value,
-                        RelatedClaimId = claimModel.RelatedClaimId
+                        ParentId = claimModel.ParentId
                     };
                     _claimDal.AddEntity(entity);
                     UpdateClaimModelIds(claimModel, entity);
@@ -1091,7 +1091,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
-                        entity.RelatedClaimId = claimModel.RelatedClaimId;
+                        entity.ParentId = claimModel.ParentId;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
                         UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
@@ -1118,7 +1118,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                     {
                         entity.Type = claimModel.Type;
                         entity.Value = claimModel.Value;
-                        entity.RelatedClaimId = claimModel.RelatedClaimId;
+                        entity.ParentId = claimModel.ParentId;
                         _claimDal.UpdateEntity(entity);
                         UpdateClaimModelIds(claimModel, entity);
                         UpdateUserClaimsByClaim(claimModel.IdentityUsers, entity.Id);
@@ -1279,7 +1279,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Guid = claim.Guid,
                 Type = claim.Type,
                 Value = claim.Value,
-                RelatedClaimId = claim.RelatedClaimId
+                ParentId = claim.ParentId
             };
             var usersResult = GetUsersByClaim(model.Id);
             model.IdentityUsers = usersResult.Data;
@@ -1298,7 +1298,7 @@ namespace AppCore.Business.Concretes.Services.Identity
                 Guid = e.Guid,
                 Type = e.Type,
                 Value = e.Value,
-                RelatedClaimId = e.RelatedClaimId
+                ParentId = e.ParentId
             }).ToList();
             if (includeUsers)
             {
