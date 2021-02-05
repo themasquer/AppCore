@@ -142,30 +142,37 @@ namespace AppCore.Utils
 
         public static string RemoveHtmlTags(string source)
         {
-            char[] array = new char[source.Length];
-            int arrayIndex = 0;
-            bool inside = false;
-            for (int i = 0; i < source.Length; i++)
+            string result = "";
+            if (source != null)
             {
-                char let = source[i];
-                if (let == '<')
+                char[] array = new char[source.Length];
+                int arrayIndex = 0;
+                bool inside = false;
+                for (int i = 0; i < source.Length; i++)
                 {
-                    inside = true;
-                    continue;
+                    char let = source[i];
+                    if (let == '<')
+                    {
+                        inside = true;
+                        continue;
+                    }
+
+                    if (let == '>')
+                    {
+                        inside = false;
+                        continue;
+                    }
+
+                    if (!inside)
+                    {
+                        array[arrayIndex] = let;
+                        arrayIndex++;
+                    }
                 }
-                if (let == '>')
-                {
-                    inside = false;
-                    continue;
-                }
-                if (!inside)
-                {
-                    array[arrayIndex] = let;
-                    arrayIndex++;
-                }
+                result = new string(array, 0, arrayIndex);
+                result = result.Replace("&nbsp;", " ").Replace("<br>", " ").Replace("<br />", " ").Replace("<br/>", " ")
+                    .Replace("&amp;", "&");
             }
-            string result = new string(array, 0, arrayIndex);
-            result = result.Replace("&nbsp;", " ").Replace("<br>", " ").Replace("<br />", " ").Replace("<br/>", " ").Replace("&amp;", "&");
             return result;
         }
 
