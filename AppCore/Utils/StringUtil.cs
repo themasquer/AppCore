@@ -140,7 +140,7 @@ namespace AppCore.Utils
             return result;
         }
 
-        public static string RemoveHtmlTags(string source)
+        public static string RemoveHtmlTags(string source, bool trim = true)
         {
             string result = "";
             if (source != null)
@@ -172,6 +172,8 @@ namespace AppCore.Utils
                 result = new string(array, 0, arrayIndex);
                 result = result.Replace("&nbsp;", " ").Replace("<br>", " ").Replace("<br />", " ").Replace("<br/>", " ")
                     .Replace("&amp;", "&");
+                if (trim)
+                    result = result.Trim();
             }
             return result;
         }
